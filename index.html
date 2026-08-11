@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>차윤겸 | 데이터 분석 포트폴리오.</title>
+  <title>차윤겸 | 데이터 분석 포트폴리오</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -65,7 +65,7 @@
   <header class="fixed top-0 w-full z-40 bg-white/80 dark:bg-slate-900/80 glass-card border-b border-slate-200 dark:border-slate-800 transition-colors">
     <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
       <!-- Logo -->
-      <a href="#" class="text-xl font-extrabold tracking-tight flex items-center gap-2">
+      <a href="../index.html" class="text-xl font-extrabold tracking-tight flex items-center gap-2">
         <span class="p-2 rounded-lg bg-indigo-600 text-white text-xs font-bold">CYG</span>
         <span class="bg-gradient-to-r from-indigo-600 via-sky-500 to-emerald-500 dark:from-indigo-400 dark:via-sky-400 dark:to-emerald-400 bg-clip-text text-transparent">차윤겸</span>
       </a>
@@ -73,18 +73,28 @@
       <!-- Menu & Theme Switcher -->
       <div class="flex items-center gap-6">
         <nav class="hidden md:flex space-x-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+          <a href="../index.html" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition flex items-center gap-1.5"><i class="fa-solid fa-house text-xs"></i> 홈</a>
           <a href="#about" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">소개</a>
           <a href="#reports" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">보고서 카드</a>
           <a href="#skills" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">기술 스택</a>
           <a href="#contact" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">연락처</a>
         </nav>
 
-        <!-- Theme Toggle Button -->
-        <button id="theme-toggle" type="button" aria-label="테마 변경" 
-                class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center">
-          <i id="theme-toggle-dark-icon" class="fa-solid fa-moon text-base hidden"></i>
-          <i id="theme-toggle-light-icon" class="fa-solid fa-sun text-base hidden"></i>
-        </button>
+        <div class="flex items-center gap-2">
+          <!-- Home Button -->
+          <a href="../index.html" title="홈으로 이동" aria-label="홈으로 이동" 
+             class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center text-xs font-semibold gap-1.5">
+            <i class="fa-solid fa-house"></i>
+            <span class="hidden sm:inline">홈</span>
+          </a>
+
+          <!-- Theme Toggle Button -->
+          <button id="theme-toggle" type="button" aria-label="테마 변경" 
+                  class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center">
+            <i id="theme-toggle-dark-icon" class="fa-solid fa-moon text-base hidden"></i>
+            <i id="theme-toggle-light-icon" class="fa-solid fa-sun text-base hidden"></i>
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -129,7 +139,7 @@
           <div class="space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/50">
               <span class="text-sm text-slate-600 dark:text-slate-300">주요 분석 리포트</span>
-              <span class="text-lg font-bold text-indigo-600 dark:text-indigo-400">2 건</span>
+              <span class="text-lg font-bold text-indigo-600 dark:text-indigo-400">3 건</span>
             </div>
             <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/50">
               <span class="text-sm text-slate-600 dark:text-slate-300">활용 데이터 출처</span>
@@ -152,11 +162,11 @@
           <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">분석 보고서 카드</h2>
         </div>
         <p class="text-sm text-slate-500 dark:text-slate-400 max-w-md">
-          각 카드를 클릭하면 대화형 모달에서 데이터 분석 개요, 주요 차트, 데이터셋 처리 방식을 직접 확인하실 수 있습니다.
+          각 카드를 클릭하면 상세 분석 보고서 페이지로 이동하거나 데이터 분석 개요 및 시각화 결과를 직접 확인하실 수 있습니다.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
         <!-- Card 1: 진로보고서 -->
         <div class="group rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 p-7 hover:border-indigo-500 dark:hover:border-indigo-500 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 flex flex-col justify-between">
@@ -254,46 +264,54 @@
           </a>
         </div>
 
-      </div>
-    </section>
+        <!-- Card 3: 교통안전지수 보고서 -->
+        <div class="group rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 p-7 hover:border-emerald-500 dark:hover:border-emerald-500 shadow-sm hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <!-- Top Badges -->
+            <div class="flex items-center justify-between mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/50">
+                <i class="fa-solid fa-shield-halved mr-1"></i> 도로교통공단 데이터
+              </span>
+              <span class="text-xs text-slate-400 font-medium">교통안전 지수</span>
+            </div>
 
-    <!-- Skills & Tech Section -->
-    <section id="skills" class="py-16 px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-slate-800">
-      <div class="mb-10">
-        <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Capabilities</span>
-        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">분석 역량 및 도구</h2>
-      </div>
+            <!-- Title & Description -->
+            <h3 class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors mb-3">
+              2024년도 지자체별<br>교통안전지수 분석 보고서
+            </h3>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg font-bold">
-            <i class="fa-solid fa-database"></i>
+            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-6">
+              전국 지자체(시·군·구)별 교통안전지수 및 사고 발생 데이터를 종합 분석하여 지역별 안전 취약 요인을 정밀 도출하고 맞춤형 개선안을 제시한 리포트입니다.
+            </p>
+
+            <!-- Features Bullet Points -->
+            <ul class="space-y-2 mb-6 text-xs text-slate-500 dark:text-slate-400">
+              <li class="flex items-center gap-2">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                <span>전국 지자체 그룹별 종합 교통안전지수 등급 산출</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                <span>보행자·사업용차량·과속 등 세부 지표별 취약도 분석</span>
+              </li>
+            </ul>
+
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-2 mb-8">
+              <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-xs font-medium">Python</span>
+              <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-xs font-medium">Pandas</span>
+              <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-xs font-medium">교통안전지수 API</span>
+              <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-xs font-medium">GIS 공간분석</span>
+            </div>
           </div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">공공데이터 수집 & 정제</h3>
-          <p class="text-sm text-slate-500 dark:text-slate-400">
-            Open API, Rest API 파싱, 결측치 처리 및 비정형 데이터 규격화 프로세스 구현
-          </p>
+
+          <!-- Action Button -->
+          <a href="./data3/index.html" class="w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-700/50 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white text-slate-700 dark:text-slate-200 font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-chart-bar"></i>
+            <span>상세 보고서 및 시각화 확인</span>
+          </a>
         </div>
 
-        <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400 flex items-center justify-center text-lg font-bold">
-            <i class="fa-solid fa-chart-column"></i>
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">통계 분석 & 시각화</h3>
-          <p class="text-sm text-slate-500 dark:text-slate-400">
-            Pandas, Matplotlib, Chart.js 활용 차트 작성 및 상관관계·교차분석
-          </p>
-        </div>
-
-        <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg font-bold">
-            <i class="fa-regular fa-file-lines"></i>
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">분석 리포팅 & 스토리텔링</h3>
-          <p class="text-sm text-slate-500 dark:text-slate-400">
-            데이터 결과 요약, 가설 검증 결과 도출 및 정책/진로 개선 대안 제시
-          </p>
-        </div>
       </div>
     </section>
 
