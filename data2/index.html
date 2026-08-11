@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2023-2025 대한민국 노인 교통사고 통계 심층 분석 보고서</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Noto Sans KR) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0F172A',
+                            primary: '#DC2626', // Red accent for danger/fatality metrics
+                            secondary: '#2563EB', // Blue accent for standard metrics
+                            warning: '#D97706',
+                            surface: '#F8FAFC'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 3px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-red-900 selection:text-white">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-slate-900 text-white shadow-xl border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="../index.html" class="flex items-center gap-1.5 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-lg transition border border-slate-700">
+                    <i data-lucide="home" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">홈으로</span>
+                </a>
+                <button onclick="window.print()" class="flex items-center gap-1.5 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-lg transition border border-slate-700">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    <span class="hidden md:inline">보고서 인쇄/PDF</span>
+                </button>
+                <a href="#calculator" class="flex items-center gap-1.5 text-xs font-semibold bg-red-700 hover:bg-red-800 text-white px-3.5 py-2 rounded-lg transition shadow-md">
+                    <i data-lucide="calculator" class="w-4 h-4"></i>
+                    <span>치사율 계산기</span>
+                </a>
+            </div>
+            <div class="text-xs text-slate-400 font-mono hidden md:block">
+                분석 기간: 2023년 ~ 2025년 (3개년 누적)
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+
+        <!-- Sidebar Navigation -->
+        <aside class="lg:w-64 flex-shrink-0">
+            <div class="sticky top-20 space-y-4">
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80">
+                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">목차 바로가기</h2>
+                    <nav class="space-y-1 text-sm font-medium">
+                        <a href="#summary" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 text-slate-400"></i> 핵심 요약 (KPI)
+                        </a>
+                        <a href="#national-trend" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-slate-400"></i> 1. 전국 발생 현황 및 추세
+                        </a>
+                        <a href="#regional-compare" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="map" class="w-4 h-4 text-slate-400"></i> 2. 광역지자체별 비교
+                        </a>
+                        <a href="#fatality-rate" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="percent" class="w-4 h-4 text-slate-400"></i> 3. 사고 치사율 심층 분석
+                        </a>
+                        <a href="#hotspots" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="map-pin-off" class="w-4 h-4 text-slate-400"></i> 4. 위험 지역 (Hotspots)
+                        </a>
+                        <a href="#anomalies" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-slate-400"></i> 5. 연도별 특이점 분석
+                        </a>
+                        <a href="#calculator" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="shield-alert" class="w-4 h-4 text-slate-400"></i> 6. 위험도 & 치사율 계산기
+                        </a>
+                        <a href="#policy-proposals" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="lightbulb" class="w-4 h-4 text-slate-400"></i> 7. 정책적 시사점 및 제언
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Info Box -->
+                <div class="bg-gradient-to-br from-red-950 to-slate-900 text-white p-4 rounded-2xl shadow-md border border-red-800/40">
+                    <div class="flex items-center gap-2 text-red-400 font-bold text-xs uppercase mb-1">
+                        <i data-lucide="alert-circle" class="w-4 h-4"></i> 경고 지표
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed">
+                        사망자 연평균 성장률(CAGR)이 <strong>5.42%</strong>로 사고 건수 성장률(3.25%)을 상회하여 치명적 사고 비중이 급격히 늘고 있습니다.
+                    </p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 space-y-10 min-w-0">
+
+            <!-- Executive Hero Summary -->
+            <section id="summary" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="border-b border-slate-100 pb-5 mb-6">
+                    <div class="flex items-center gap-2 text-red-700 font-semibold text-sm mb-1">
+                        <i data-lucide="file-bar-chart" class="w-4 h-4"></i> 국가 교통안전 분석 보고서
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                        2023-2025 대한민국 노인 교통사고 통계 심층 분석 보고서
+                    </h1>
+                    <p class="text-slate-500 text-sm mt-2 leading-relaxed">
+                        최근 3년간(2023년~2025년) 전국 고령자 교통사고 발생 양상, 치사율 양극화, 지역별 핫스팟(Hotspots) 식별 및 정책적 대응 방안을 종합 분석한 데이터 보고서입니다.
+                    </p>
+                </div>
+
+                <!-- KPI Metric Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs text-slate-500 font-medium">3년 누적 사고 건수</span>
+                        <div class="text-2xl font-black text-slate-900 mt-1">120,705<span class="text-sm font-normal text-slate-600">건</span></div>
+                        <p class="text-[11px] text-emerald-600 font-medium mt-1">사고 CAGR +3.25%</p>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs text-slate-500 font-medium">3년 누적 사망자 수</span>
+                        <div class="text-2xl font-black text-red-700 mt-1">3,917<span class="text-sm font-normal text-red-600">명</span></div>
+                        <p class="text-[11px] text-red-600 font-medium mt-1">사망 CAGR +5.42% ⚠️</p>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs text-slate-500 font-medium">3년 누적 부상자 수</span>
+                        <div class="text-2xl font-black text-slate-900 mt-1">133,590<span class="text-sm font-normal text-slate-600">명</span></div>
+                        <p class="text-[11px] text-slate-500 mt-1">연평균 약 4.45만명</p>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs text-slate-500 font-medium">전국 평균 치사율</span>
+                        <div class="text-2xl font-black text-amber-700 mt-1">3.24<span class="text-sm font-normal text-amber-600">%</span></div>
+                        <p class="text-[11px] text-amber-600 font-medium mt-1">최대 7.79% (인천 강화)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 1. 전국 노인 교통사고 발생 현황 및 추세 분석 -->
+            <section id="national-trend" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">1</span>
+                    <h2 class="text-xl font-bold text-slate-900">전국 노인 교통사고 발생 현황 및 추세 분석</h2>
+                </div>
+
+                <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                    2023년부터 2025년까지의 전국 데이터를 분석한 결과, 사고 건수와 인명 피해 규모 모두에서 지속적인 양적 팽창이 확인되었습니다. 특히 사망자 수의 증가율이 사고 건수 증가율을 상회하며 사고의 심각도(Severity)가 점진적으로 악화되는 추세를 보이고 있습니다.
+                </p>
+
+                <!-- Data Table & Chart Grid -->
+                <div class="grid lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Table -->
+                    <div class="overflow-x-auto rounded-2xl border border-slate-200">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                    <th class="p-3.5">연도</th>
+                                    <th class="p-3.5">사고 건수 [건]</th>
+                                    <th class="p-3.5">사망자 수 [명]</th>
+                                    <th class="p-3.5">부상자 수 [명]</th>
+                                    <th class="p-3.5">치사율 [%]</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 text-slate-600">
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3.5 font-bold text-slate-900">2023년</td>
+                                    <td class="p-3.5">38,960</td>
+                                    <td class="p-3.5 text-red-700 font-semibold">1,240</td>
+                                    <td class="p-3.5">43,005</td>
+                                    <td class="p-3.5 font-mono">3.18%</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3.5 font-bold text-slate-900">2024년</td>
+                                    <td class="p-3.5">40,208</td>
+                                    <td class="p-3.5 text-red-700 font-semibold">1,299</td>
+                                    <td class="p-3.5">44,564</td>
+                                    <td class="p-3.5 font-mono">3.23%</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3.5 font-bold text-slate-900">2025년</td>
+                                    <td class="p-3.5">41,537</td>
+                                    <td class="p-3.5 text-red-700 font-bold">1,378</td>
+                                    <td class="p-3.5">46,021</td>
+                                    <td class="p-3.5 font-mono font-bold text-red-700">3.32%</td>
+                                </tr>
+                                <tr class="bg-slate-100 font-bold text-slate-900">
+                                    <td class="p-3.5">합계 (3년)</td>
+                                    <td class="p-3.5">120,705</td>
+                                    <td class="p-3.5 text-red-700">3,917</td>
+                                    <td class="p-3.5">133,590</td>
+                                    <td class="p-3.5 text-amber-700">3.24% (평균)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Trend Chart -->
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                <i data-lucide="line-chart" class="w-4 h-4 text-red-700"></i> 연도별 사고 건수 vs 사망자 수 증감 추이
+                            </h3>
+                            <span class="text-[10px] bg-red-100 text-red-800 font-bold px-2 py-0.5 rounded">CAGR격차: 2.17%p</span>
+                        </div>
+                        <div class="h-48 relative">
+                            <canvas id="nationalTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50">
+                        <div class="flex items-center gap-2 font-bold text-slate-900 mb-2 text-sm">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-red-700"></i> 연평균 성장률(CAGR) 분석
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            2023년 대비 2025년의 사고 건수 연평균 성장률은 <strong>약 3.25%</strong>를 기록한 반면, 사망자 수의 CAGR은 <strong>약 5.42%</strong>로 산출되었습니다. 이는 단순 사고 빈도의 증가를 넘어 인명 피해로 직결되는 치명적 사고 비중이 더 빠르게 확대되고 있음을 의미합니다.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50">
+                        <div class="flex items-center gap-2 font-bold text-slate-900 mb-2 text-sm">
+                            <i data-lucide="shield-alert" class="w-4 h-4 text-red-700"></i> 고령자 교통안전의 질적 악화
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            3년간 누적 부상자 수가 13만 명을 상회하는 가운데, 사망자 증가세가 가파르다는 점은 기존 교통안전 대책이 고령화 속도와 사고 심각도 변화를 충분히 억제하지 못하고 있음을 시사합니다.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. 주요 광역자치단체별 비교 분석 -->
+            <section id="regional-compare" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">2</span>
+                    <h2 class="text-xl font-bold text-slate-900">주요 광역자치단체별 비교 분석</h2>
+                </div>
+
+                <p class="text-sm text-slate-600 mb-6">
+                    서울, 경기 등 수도권과 부산, 대구 등 영남권 주요 도시의 3년간 누적 데이터를 통해 지역별 사고 규모와 피해 양상을 대조하였습니다.
+                </p>
+
+                <div class="grid lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Regional Table -->
+                    <div class="overflow-x-auto rounded-2xl border border-slate-200">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                    <th class="p-3.5">지역</th>
+                                    <th class="p-3.5">3년 누적 사고 건수 [건]</th>
+                                    <th class="p-3.5">3년 누적 사망자 수 [명]</th>
+                                    <th class="p-3.5">특징 및 비고</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 text-slate-600">
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3.5 font-bold text-slate-900">서울</td>
+                                    <td class="p-3.5 font-semibold">17,992</td>
+                                    <td class="p-3.5 font-bold text-red-700">294</td>
+                                    <td class="p-3.5">도심형 밀집 사고 및 사망자 급증세</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3.5 font-bold text-slate-900">경기</td>
+                                    <td class="p-3.5 font-bold text-blue-800">27,201</td>
+                                    <td class="p-3.5 text-slate-400">미비*</td>
+                                    <td class="p-3.5">전국 최대 사고 발생 지역 (광역 총계 미표기)</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3.5 font-bold text-slate-900">부산</td>
+                                    <td class="p-3.5 font-semibold">7,161</td>
+                                    <td class="p-3.5 font-bold text-red-700">176</td>
+                                    <td class="p-3.5">영남권 최대 인명 피해 발생 지역</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3.5 font-bold text-slate-900">대구</td>
+                                    <td class="p-3.5 font-semibold">6,740</td>
+                                    <td class="p-3.5 font-semibold text-slate-800">128</td>
+                                    <td class="p-3.5">지속적인 고발생 추세 유지</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Regional Comparison Chart -->
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+                        <h3 class="text-xs font-bold text-slate-800 mb-2 flex items-center gap-1.5">
+                            <i data-lucide="bar-chart-2" class="w-4 h-4 text-red-700"></i> 광역지자체 누적 사고 건수 & 사망자 수 비교
+                        </h3>
+                        <div class="h-48 relative">
+                            <canvas id="regionalCompareChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-blue-50/70 p-4 rounded-2xl border border-blue-200/60">
+                        <h3 class="text-xs font-bold text-blue-900 flex items-center gap-1.5 mb-1.5">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-blue-700"></i> 수도권 (서울·경기) 특성
+                        </h3>
+                        <p class="text-xs text-blue-950 leading-relaxed">
+                            전국 노인 교통사고의 <strong>약 37.4%</strong>가 서울과 경기에 집중되어 있습니다. 경기도는 기초지자체별 발생량이 압도적이며, 서울은 도심 내 고령 보행자 및 운전자 밀집으로 인한 사고 빈도가 매우 높습니다.
+                        </p>
+                    </div>
+
+                    <div class="bg-amber-50/70 p-4 rounded-2xl border border-amber-200/60">
+                        <h3 class="text-xs font-bold text-amber-900 flex items-center gap-1.5 mb-1.5">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-700"></i> 영남권 (부산·대구) 치명률 비교
+                        </h3>
+                        <p class="text-xs text-amber-950 leading-relaxed">
+                            부산은 대구와 사고 건수 면에서 큰 차이가 없으나(약 6% 차이), 사망자 수는 대구(128명)보다 부산(176명)이 <strong>약 37.5% 더 많아</strong> 사고 발생 시 치명률이 상대적으로 매우 높게 나타납니다.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. 사고 치사율(Fatality Rate) 심층 분석 -->
+            <section id="fatality-rate" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">3</span>
+                    <h2 class="text-xl font-bold text-slate-900">사고 치사율(Fatality Rate) 심층 분석</h2>
+                </div>
+
+                <p class="text-sm text-slate-600 mb-6">
+                    전국 3개년 누적 평균 치사율(사망자 수 / 사고 건수 × 100)은 <strong class="text-red-700">3.24%</strong>입니다. 도심 지역은 사고 건수가 많으나 치사율은 상대적으로 낮고, 외곽 및 도농 복합 지역은 사고 건수는 적으나 치사율이 전국 평균을 압도하는 양극화 현상이 뚜렷합니다.
+                </p>
+
+                <!-- High Fatality Rate Areas Grid -->
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="p-4 rounded-2xl bg-red-50 border border-red-200">
+                        <div class="flex items-center justify-between text-xs font-bold text-red-900 mb-1">
+                            <span>인천 강화군</span>
+                            <span class="bg-red-700 text-white text-[10px] px-2 py-0.5 rounded-full">전국 최고</span>
+                        </div>
+                        <div class="text-2xl font-black text-red-700">7.79%</div>
+                        <p class="text-[11px] text-red-800 mt-1">사고 231건 / 사망 18명<br>(전국 평균의 2.4배)</p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-orange-50 border border-orange-200">
+                        <div class="flex items-center justify-between text-xs font-bold text-orange-900 mb-1">
+                            <span>울산 울주군</span>
+                            <span class="bg-orange-600 text-white text-[10px] px-2 py-0.5 rounded-full">위험</span>
+                        </div>
+                        <div class="text-2xl font-black text-orange-700">6.11%</div>
+                        <p class="text-[11px] text-orange-800 mt-1">사고 507건 / 사망 31명<br>(외곽 고속 주행 영향)</p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200">
+                        <div class="flex items-center justify-between text-xs font-bold text-amber-900 mb-1">
+                            <span>대구 달성군</span>
+                            <span class="bg-amber-600 text-white text-[10px] px-2 py-0.5 rounded-full">상위</span>
+                        </div>
+                        <div class="text-2xl font-black text-amber-700">3.85%</div>
+                        <p class="text-[11px] text-amber-800 mt-1">사고 546건 / 사망 21명<br>(전국 평균 상회)</p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-800 mb-1">
+                            <span>부산 기장군</span>
+                            <span class="bg-slate-600 text-white text-[10px] px-2 py-0.5 rounded-full">주의</span>
+                        </div>
+                        <div class="text-2xl font-black text-slate-800">3.21%</div>
+                        <p class="text-[11px] text-slate-600 mt-1">사고 374건 / 사망 12명<br>(전국 평균 근접)</p>
+                    </div>
+                </div>
+
+                <!-- Contrast Callout Box -->
+                <div class="bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div class="flex items-start gap-3">
+                        <i data-lucide="info" class="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <h3 class="text-sm font-bold text-white mb-1">도심 다발 지역 vs 외곽 고치사 지역의 대조 (예: 서울 송파구)</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                서울 송파구의 경우 누적 사망자(23명)는 적지 않으나, 총 사고 발생 건수(1,200건)가 매우 많아 치사율은 <strong>1.92%</strong>로 전국 평균(3.24%)보다 훨씬 낮습니다. 따라서 송파구는 '고치사 지역'이 아닌 <strong>'사고 밀집 다발 지역'</strong>으로 분류하여 보행 환경 개선 중심 접근이 타당합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. 지역별 위험 지역(Hotspots) 식별 -->
+            <section id="hotspots" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">4</span>
+                    <h2 class="text-xl font-bold text-slate-900">지역별 위험 지역 (Hotspots) 식별</h2>
+                </div>
+
+                <p class="text-sm text-slate-600 mb-6">
+                    누적 통계 데이터에 근거하여 사고 발생 빈도가 가장 높은 지역과 실질적인 인명 피해(사망)가 가장 큰 지역을 2가지 트랙으로 도출하였습니다.
+                </p>
+
+                <div class="grid lg:grid-cols-2 gap-8 mb-6">
+                    <!-- Frequency Top 5 -->
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <div class="flex items-center justify-between mb-4 border-b border-slate-200 pb-3">
+                            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="activity" class="w-4 h-4 text-blue-600"></i> 사고 다발 지역 (3년 누적 사고 건수 Top 5)
+                            </h3>
+                            <span class="text-[11px] bg-blue-100 text-blue-800 font-medium px-2 py-0.5 rounded">발생 빈도 중심</span>
+                        </div>
+                        
+                        <div class="space-y-3 text-xs">
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200">
+                                <span class="font-bold text-slate-900">1. 경기 고양시</span>
+                                <span class="font-black text-blue-700 text-sm">1,868건</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200">
+                                <span class="font-bold text-slate-900">2. 경기 화성시</span>
+                                <span class="font-black text-blue-700 text-sm">1,485건</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200">
+                                <span class="font-bold text-slate-900">3. 서울 강남구</span>
+                                <span class="font-black text-blue-700 text-sm">1,412건</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200">
+                                <span class="font-bold text-slate-900">4. 서울 송파구</span>
+                                <span class="font-black text-blue-700 text-sm">1,200건</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200">
+                                <span class="font-bold text-slate-900">5. 대구 달서구</span>
+                                <span class="font-black text-blue-700 text-sm">1,194건</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fatality Top 5 -->
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <div class="flex items-center justify-between mb-4 border-b border-slate-200 pb-3">
+                            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="skull" class="w-4 h-4 text-red-600"></i> 치명적 위험 지역 (3년 누적 사망자 수 Top 5)
+                            </h3>
+                            <span class="text-[11px] bg-red-100 text-red-800 font-medium px-2 py-0.5 rounded">인명 피해 중심</span>
+                        </div>
+
+                        <div class="space-y-3 text-xs">
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-white border border-red-200">
+                                <span class="font-bold text-slate-900">1. 경기 화성시 🔥</span>
+                                <span class="font-black text-red-700 text-sm">41명</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200">
+                                <span class="font-bold text-slate-900">2. 울산 울주군</span>
+                                <span class="font-black text-red-700 text-sm">31명</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200">
+                                <span class="font-bold text-slate-900">3. 경기 시흥시</span>
+                                <span class="font-black text-red-700 text-sm">31명</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200">
+                                <span class="font-bold text-slate-900">4. 경기 남양주시</span>
+                                <span class="font-black text-red-700 text-sm">31명</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200">
+                                <span class="font-bold text-slate-900">5. 경기 포천시</span>
+                                <span class="font-black text-red-700 text-sm">28명</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hotspots Chart -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <h3 class="text-xs font-bold text-slate-800 mb-3 flex items-center gap-1.5">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4 text-red-700"></i> 주요 핫스팟 지역 발생건수 vs 사망자 시각화
+                    </h3>
+                    <div class="h-56 relative">
+                        <canvas id="hotspotChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. 연도별 변동 특이점 및 분석 결과 요약 -->
+            <section id="anomalies" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">5</span>
+                    <h2 class="text-xl font-bold text-slate-900">연도별 변동 특이점 및 분석 결과 요약</h2>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Point 1 -->
+                    <div class="p-4 rounded-2xl bg-red-50/60 border border-red-200 flex gap-3.5 items-start">
+                        <div class="p-2 rounded-xl bg-red-700 text-white font-bold text-xs flex-shrink-0 mt-0.5">특이점 1</div>
+                        <div class="text-xs text-slate-800 space-y-1">
+                            <strong class="text-red-950 font-bold block text-sm">서울 지역 사망자 수의 이상 급증 (+63.4%)</strong>
+                            <p class="leading-relaxed text-slate-700">
+                                서울의 노인 사망자 수는 <strong>2023년 71명에서 2025년 116명으로 무려 63.4% 폭증</strong>하였습니다. 동일 기간 사고 건수 증가폭(약 10.5%)을 크게 상회하는 수치로, 서울 도심 내 고령자 사고의 중증도(Severity)가 급격히 악화되었음을 증명합니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Point 2 -->
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex gap-3.5 items-start">
+                        <div class="p-2 rounded-xl bg-slate-800 text-white font-bold text-xs flex-shrink-0 mt-0.5">특이점 2</div>
+                        <div class="text-xs text-slate-800 space-y-1">
+                            <strong class="text-slate-900 font-bold block text-sm">지역별 위험 지표의 이원화 (고위험 vs 고치사)</strong>
+                            <p class="leading-relaxed text-slate-600">
+                                <strong>경기 화성시</strong>와 같이 사고 건수(전국 2위)와 사망자 수(전국 1위)가 모두 최상위권인 '고위험 집중 지역'이 존재하는 반면, <strong>인천 강화군</strong>과 같이 사고 빈도는 낮으나 치사율이 전국 평균의 2.4배에 달하는 '고치사 외곽 지역'이 명확히 구분됩니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Point 3 -->
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex gap-3.5 items-start">
+                        <div class="p-2 rounded-xl bg-slate-800 text-white font-bold text-xs flex-shrink-0 mt-0.5">특이점 3</div>
+                        <div class="text-xs text-slate-800 space-y-1">
+                            <strong class="text-slate-900 font-bold block text-sm">기초자치단체 간 격차 극대화 (최대 62배 차이)</strong>
+                            <p class="leading-relaxed text-slate-600">
+                                경기 고양시(1,868건)와 인천 옹진군(30건)의 사고 발생량 격차는 약 <strong>62배</strong>에 달합니다. 이는 일괄적인 중앙 정책이 아닌, 지자체별 교통 환경과 인구 구조를 반영한 '핀셋형 맞춤 대책'이 필수적임을 뒷받침합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. 치사율 & 위험도 시뮬레이터 -->
+            <section id="calculator" class="bg-gradient-to-br from-slate-900 via-slate-800 to-red-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-600 text-white flex items-center justify-center font-bold text-sm">6</span>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">지역별 교통사고 치사율 & 위험도 계산기</h2>
+                        <p class="text-xs text-slate-300">지역의 사고 건수와 사망자 수를 입력하여 치사율과 위험 등급을 계산해 보세요.</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Input Form -->
+                    <div class="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm">
+                        <h3 class="text-sm font-bold text-red-300 mb-4 flex items-center gap-2">
+                            <i data-lucide="edit-3" class="w-4 h-4"></i> 사고 데이터 입력
+                        </h3>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs text-slate-300 mb-1">지역/지자체 이름 (선택)</label>
+                                <input type="text" id="calcRegionName" placeholder="예: 인천 강화군" value="임의 분석 지역" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:ring-2 focus:ring-red-500">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[11px] text-slate-300 mb-1">총 사고 건수 [건]</label>
+                                    <input type="number" id="calcAccidents" min="1" value="231" oninput="calculateFatality()" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white text-center font-mono focus:ring-2 focus:ring-red-500">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] text-slate-300 mb-1">총 사망자 수 [명]</label>
+                                    <input type="number" id="calcDeaths" min="0" value="18" oninput="calculateFatality()" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white text-center font-mono focus:ring-2 focus:ring-red-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 rounded-xl bg-slate-900/80 border border-slate-700/80 text-xs">
+                            <div class="flex justify-between text-slate-400 mb-1">
+                                <span>전국 평균 치사율:</span>
+                                <span class="font-bold text-amber-400">3.24%</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400">치사율 = (사망자 수 / 사고 건수) × 100</p>
+                        </div>
+                    </div>
+
+                    <!-- Output Results -->
+                    <div class="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-sm font-bold text-red-300 mb-3 flex items-center gap-2">
+                                <i data-lucide="pie-chart" class="w-4 h-4"></i> 분석 결과 및 위험 수준
+                            </h3>
+
+                            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-700 space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs text-slate-400">산출 치사율</span>
+                                    <span id="calcFatalityRateText" class="text-2xl font-black text-red-500">7.79%</span>
+                                </div>
+                                <div class="flex justify-between items-center border-t border-slate-800 pt-2">
+                                    <span class="text-xs text-slate-400">전국 평균 대비</span>
+                                    <span id="calcRatioText" class="text-xs font-bold text-red-400">전국 평균의 2.40배</span>
+                                </div>
+                                <div class="flex justify-between items-center border-t border-slate-800 pt-2">
+                                    <span class="text-xs text-slate-400">위험 등급</span>
+                                    <span id="calcRiskBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-red-900/80 text-red-200 border border-red-700">위험도 매우 높음 (고치사 외곽형)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 rounded-xl bg-slate-900/80 border border-slate-700 text-xs">
+                            <strong class="text-red-300 font-bold block mb-1">권장 정책 대응:</strong>
+                            <p id="calcPolicyText" class="text-[11px] text-slate-300 leading-relaxed">
+                                노인보호구역(Silver Zone) 전면 확대, 주행 속도 단속 인프라 우선 도입 및 외곽 도로 펜스 설치가 시급합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. 정책적 시사점 및 제언 -->
+            <section id="policy-proposals" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">7</span>
+                    <h2 class="text-xl font-bold text-slate-900">정책적 시사점 및 3대 맞춤형 제언</h2>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Strategy 1 -->
+                    <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between space-y-4">
+                        <div>="space-y-2">
+                            <div class="w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-lg mb-3">1</div>
+                            <h3 class="text-sm font-bold text-slate-900">고치사율 외곽 지역 대상<br>'실버존 고도화 & 속도 하향'</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed mt-2">
+                                강화군(7.79%), 울주군(6.11%) 등 치사율이 극단적으로 높은 지역은 도로의 평균 주행 속도가 높고 보도가 미흡합니다. 주요 국도 및 지방도를 대상으로 <strong>노인 보호구역(Silver Zone) 전면 확대</strong>, 구간 단속 장비 및 물리적 속도 저감 시설을 우선 도입해야 합니다.
+                            </p>
+                        </div>
+                        <div class="text-[11px] font-semibold text-red-700 bg-red-50 p-2.5 rounded-xl border border-red-100">
+                            대상: 강화, 울주, 달성, 기장 등
+                        </div>
+                    </div>
+
+                    <!-- Strategy 2 -->
+                    <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg mb-3">2</div>
+                            <h3 class="text-sm font-bold text-slate-900">사고 다발 도심 거점 대상<br>'보행자 중심 도로 재설계'</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed mt-2">
+                                고양시, 화성시, 강남구 등 사고 건수가 1,000건을 상회하는 지역은 도로 구조를 보행자 중심으로 재편해야 합니다. 복지시설 및 의료기관 주변 <strong>횡단보도 신호시간 연장</strong>, '보행 섬' 확충, 야간 시인성 조명 시설 개선을 추진합니다.
+                            </p>
+                        </div>
+                        <div class="text-[11px] font-semibold text-blue-700 bg-blue-50 p-2.5 rounded-xl border border-blue-100">
+                            대상: 고양, 화성, 강남, 송파, 달서 등
+                        </div>
+                    </div>
+
+                    <!-- Strategy 3 -->
+                    <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg mb-3">3</div>
+                            <h3 class="text-sm font-bold text-slate-900">도농 복합 지역 맞춤형<br>'ITS 지능형 응급 후송 연계'</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed mt-2">
+                                화성시, 시흥시, 남양주시와 같이 사망자 절대 수치가 높은 도농 복합 지역은 사고 발생 직후 의료기관 이송까지의 <strong>'골든타임' 확보</strong>가 생존율을 결정합니다. 지능형 교통 체계(ITS) 기반 소방-거점병원 긴급 대응 연계 체계를 신속 구축해야 합니다.
+                            </p>
+                        </div>
+                        <div class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 p-2.5 rounded-xl border border-emerald-100">
+                            대상: 화성, 시흥, 남양주, 포천 등
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-8 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p class="font-medium text-slate-300">2023-2025 대한민국 노인 교통사고 통계 심층 분석 보고서</p>
+            <p class="text-slate-500">본 보고서는 제공된 2023~2025년 전국 및 주요 지자체 노인 교통사고 누적 데이터를 바탕으로 작성된 정책 제언용 웹 리포트입니다.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // 1. National Trend Chart
+            const nationalCtx = document.getElementById('nationalTrendChart').getContext('2d');
+            new Chart(nationalCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['2023년', '2024년', '2025년'],
+                    datasets: [
+                        {
+                            label: '사고 건수 [건]',
+                            data: [38960, 40208, 41537],
+                            backgroundColor: 'rgba(37, 99, 235, 0.6)',
+                            borderColor: '#2563EB',
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '사망자 수 [명]',
+                            data: [1240, 1299, 1378],
+                            type: 'line',
+                            borderColor: '#DC2626',
+                            backgroundColor: '#DC2626',
+                            borderWidth: 3,
+                            pointRadius: 5,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 10 } } }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            min: 30000,
+                            grid: { drawOnChartArea: false }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            min: 1000,
+                            grid: { drawOnChartArea: false }
+                        }
+                    }
+                }
+            });
+
+            // 2. Regional Compare Chart
+            const regionalCtx = document.getElementById('regionalCompareChart').getContext('2d');
+            new Chart(regionalCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['서울', '경기', '부산', '대구'],
+                    datasets: [
+                        {
+                            label: '3년 누적 사고 건수 [건]',
+                            data: [17992, 27201, 7161, 6740],
+                            backgroundColor: '#3B82F6',
+                            borderRadius: 6
+                        },
+                        {
+                            label: '3년 누적 사망자 수 [명]',
+                            data: [294, 0, 176, 128], // 경기 사망자 미표기 0 처리
+                            backgroundColor: '#DC2626',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 10 } } }
+                    }
+                }
+            });
+
+            // 3. Hotspot Chart
+            const hotspotCtx = document.getElementById('hotspotChart').getContext('2d');
+            new Chart(hotspotCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['경기 고양', '경기 화성', '서울 강남', '서울 송파', '대구 달서', '울산 울주', '경기 시흥', '인천 강화'],
+                    datasets: [
+                        {
+                            label: '3년 누적 사고 건수',
+                            data: [1868, 1485, 1412, 1200, 1194, 507, 0, 231],
+                            backgroundColor: '#94A3B8',
+                            borderRadius: 4
+                        },
+                        {
+                            label: '3년 누적 사망자 수',
+                            data: [0, 41, 0, 23, 0, 31, 31, 18],
+                            backgroundColor: '#DC2626',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 10 } } }
+                    }
+                }
+            });
+
+            // Initial calculation call
+            calculateFatality();
+        });
+
+        // Interactive Fatality Calculation Function
+        function calculateFatality() {
+            const accidents = parseFloat(document.getElementById('calcAccidents').value) || 0;
+            const deaths = parseFloat(document.getElementById('calcDeaths').value) || 0;
+            const nationalAvg = 3.24;
+
+            if (accidents <= 0) {
+                document.getElementById('calcFatalityRateText').innerText = "0.00%";
+                document.getElementById('calcRatioText').innerText = "데이터 불충분";
+                return;
+            }
+
+            const fatalityRate = (deaths / accidents) * 100;
+            const ratio = fatalityRate / nationalAvg;
+
+            document.getElementById('calcFatalityRateText').innerText = fatalityRate.toFixed(2) + "%";
+            document.getElementById('calcRatioText').innerText = `전국 평균(${nationalAvg}%)의 ${ratio.toFixed(2)}배`;
+
+            const badgeEl = document.getElementById('calcRiskBadge');
+            const policyEl = document.getElementById('calcPolicyText');
+
+            if (fatalityRate >= 5.0) {
+                badgeEl.innerText = "위험도 매우 높음 (고치사 외곽형)";
+                badgeEl.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-red-900/80 text-red-200 border border-red-700";
+                policyEl.innerText = "노인보호구역(Silver Zone) 전면 확대, 주행 속도 단속 인프라 우선 도입 및 외곽 도로 안전 펜스 설치가 시급합니다.";
+            } else if (fatalityRate >= 3.24) {
+                badgeEl.innerText = "위험도 주의 (전국 평균 상회)";
+                badgeEl.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-amber-900/80 text-amber-200 border border-amber-700";
+                policyEl.innerText = "지능형 교통체계(ITS) 연계 응급 이송 골든타임 확보 및 야간 조명/시인성 개선이 필요합니다.";
+            } else {
+                badgeEl.innerText = "위험도 관리 범위 (도심 밀집형)";
+                badgeEl.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-blue-900/80 text-blue-200 border border-blue-700";
+                policyEl.innerText = "사고 빈도가 높은 지역입니다. 횡단보도 신호시간 연장, 보행 섬 설치 및 보행자 중심 도로 재설계가 효과적입니다.";
+            }
+        }
+    </script>
+</body>
+</html>
