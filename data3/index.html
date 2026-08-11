@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2024년도 지자체별 교통안전지수 분석 보고서</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts Inter & Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                            900: '#0f172a',
+                        },
+                        gradeA: '#10b981',
+                        gradeB: '#3b82f6',
+                        gradeC: '#f59e0b',
+                        gradeD: '#f97316',
+                        gradeE: '#ef4444'
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.25s ease-in-out;
+        }
+        .glass-card:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-blue-500 selection:text-white">
+
+    <!-- Navigation / Header -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid fa-shield-halved text-white text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-widest text-blue-400">2024 Traffic Safety Index</span>
+                    <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                        대한민국 지자체별 교통안전지수 분석 보고서
+                    </h1>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>227개 지자체 통계
+                </span>
+                <button onclick="window.print()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 transition border border-slate-700 flex items-center gap-1.5">
+                    <i class="fa-solid fa-print"></i>
+                    <span class="hidden sm:inline">보고서 출력</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Executive Summary Cards -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-card p-5 rounded-2xl relative overflow-hidden">
+                <div class="absolute -right-2 -bottom-2 opacity-10 text-blue-400 text-7xl font-black">
+                    <i class="fa-solid fa-city"></i>
+                </div>
+                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">분석 대상 지자체</p>
+                <div class="flex items-baseline space-x-2">
+                    <span class="text-3xl font-extrabold text-white">227</span>
+                    <span class="text-sm font-semibold text-slate-400">개 지역</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                    <i class="fa-solid fa-layer-group text-blue-400"></i> 4개 행정 그룹 분류 평가
+                </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl relative overflow-hidden">
+                <div class="absolute -right-2 -bottom-2 opacity-10 text-emerald-400 text-7xl font-black">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">전국 최우수 지자체</p>
+                <div class="flex items-baseline space-x-2">
+                    <span class="text-2xl font-extrabold text-emerald-400">충남 계룡시</span>
+                </div>
+                <p class="text-xs text-emerald-300 mt-2 flex items-center justify-between">
+                    <span>종합점수 <strong>84.76점</strong></span>
+                    <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 font-bold border border-emerald-500/30">A등급</span>
+                </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl relative overflow-hidden">
+                <div class="absolute -right-2 -bottom-2 opacity-10 text-rose-400 text-7xl font-black">
+                    <i class="fa-solid fa-chart-line-down"></i>
+                </div>
+                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">최대 격차 그룹 (구 그룹)</p>
+                <div class="flex items-baseline space-x-2">
+                    <span class="text-3xl font-extrabold text-rose-400">17.83</span>
+                    <span class="text-sm font-semibold text-slate-400">점 차이</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-2 flex items-center justify-between">
+                    <span>인천 동구 (83.80)</span>
+                    <i class="fa-solid fa-arrows-left-right text-slate-500"></i>
+                    <span>서울 송파구 (65.97)</span>
+                </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl relative overflow-hidden">
+                <div class="absolute -right-2 -bottom-2 opacity-10 text-amber-400 text-7xl font-black">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">핵심 구조적 취약 요인</p>
+                <div class="flex items-baseline space-x-2">
+                    <span class="text-xl font-bold text-amber-400 truncate">도시 밀집 &amp; 도로환경</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                    <i class="fa-solid fa-bus text-amber-400"></i> 사업용 vehicle 및 도로정체 중점
+                </p>
+            </div>
+        </section>
+
+        <!-- Group Analysis Tab Section -->
+        <section class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-chart-simple text-blue-500"></i>
+                        지자체 그룹별 교통안전지수 성과 비교
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">인구 규모 및 행정 특성에 따른 4개 분석 그룹별 상·하위 격차 및 특성</p>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex flex-wrap gap-1 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800" id="groupTabs">
+                    <button onclick="switchGroup('under30k')" id="tab-under30k" class="tab-btn active px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 bg-blue-600 text-white shadow-md">
+                        30만 미만 시 (49)
+                    </button>
+                    <button onclick="switchGroup('over30k')" id="tab-over30k" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800">
+                        30만 이상 시 (29)
+                    </button>
+                    <button onclick="switchGroup('gu')" id="tab-gu" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800">
+                        구 (69)
+                    </button>
+                    <button onclick="switchGroup('gun')" id="tab-gun" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800">
+                        군 (80)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Group Content Area -->
+            <div id="groupContent" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left Details & Highlights (5 Cols) -->
+                <div class="lg:col-span-5 space-y-5 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span id="groupBadge" class="px-2.5 py-1 rounded-md text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                                그룹 1
+                            </span>
+                            <span id="groupGapText" class="text-xs text-amber-400 font-medium">
+                                <i class="fa-solid fa-arrows-left-right mr-1"></i> 점수 편차: 14.93점
+                            </span>
+                        </div>
+                        <h3 id="groupTitle" class="text-2xl font-extrabold text-white">인구 30만 미만 시 그룹</h3>
+                        <p id="groupDesc" class="text-xs text-slate-300 mt-2 leading-relaxed">
+                            49개 지역 분석 결과, 최상위 계룡시(84.76)와 최하위 경주시(69.83) 간 14.93점의 유의미한 점수 편차가 발생했습니다.
+                        </p>
+                    </div>
+
+                    <!-- Top vs Bottom Stats Table -->
+                    <div class="space-y-3">
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">그룹 내 상위 3위 &amp; 하위 3위 Summary</div>
+                        <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 overflow-x-auto">
+                            <table class="w-full text-xs text-left">
+                                <thead class="text-slate-500 border-b border-slate-800">
+                                    <tr>
+                                        <th class="pb-2">구분</th>
+                                        <th class="pb-2">지자체명</th>
+                                        <th class="pb-2 text-right">점수</th>
+                                        <th class="pb-2 text-center">등급</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="groupSummaryTable" class="divide-y divide-slate-800/60 font-medium">
+                                    <!-- Dynamic Population -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Key Insights Card -->
+                    <div id="groupInsightBox" class="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 space-y-2">
+                        <div class="text-xs font-bold text-blue-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-lightbulb"></i> 영역별 주요 특징 분석
+                        </div>
+                        <p id="groupInsightText" class="text-xs text-slate-300 leading-relaxed">
+                            <!-- Dynamic Text -->
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right Visual Chart (7 Cols) -->
+                <div class="lg:col-span-7 bg-slate-900/60 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-slate-300 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-column text-indigo-400"></i>
+                            상위 vs 하위 지역 종합 점수 및 영역별 분포
+                        </span>
+                        <span class="text-[11px] text-slate-500">* 데이터 출처: 2024 교통안전지수 보고서</span>
+                    </div>
+                    <div class="relative w-full h-[320px] sm:h-[350px] flex items-center justify-center">
+                        <canvas id="groupChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6 Evaluation Domains Section -->
+        <section class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-cubes text-emerald-400"></i>
+                        6대 평가 영역별 핵심 지표 및 우수 지자체
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">각 평가 영역의 통계적 중요성 및 최고 성과(A등급) 지역 분석</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+                <!-- Domain 1 -->
+                <div class="glass-card p-5 rounded-2xl flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-lg border border-blue-500/30">
+                                <i class="fa-solid fa-bus"></i>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                고가중치 영역
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mt-3">사업용자동차</h3>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                            주행 거리와 노출 빈도가 높아 사고 발생 시 심각도가 큼. 도심 상업 지구 및 물류 유동 지역 관리 핵심.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1.5">
+                        <div class="text-[11px] font-semibold text-slate-400">대표 우수 지자체 (A등급)</div>
+                        <div class="flex flex-wrap gap-1.5 text-xs">
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">강원 인제군 (83.49)</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">전남 구례군 (83.47)</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">강원 원주시 (82.51)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Domain 2 -->
+                <div class="glass-card p-5 rounded-2xl flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div class="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-lg border border-teal-500/30">
+                                <i class="fa-solid fa-bicycle"></i>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">
+                                신교통수단 지표
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mt-3">자전거 및 이륜차</h3>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                            배달 서비스 증가 및 개인형 이동장치(PM) 확산에 따른 취약 구간 파악 및 사고 위험도 측정.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1.5">
+                        <div class="text-[11px] font-semibold text-slate-400">대표 우수 지자체 (A등급)</div>
+                        <div class="flex flex-wrap gap-1.5 text-xs">
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">강원 태백시 (84.16)</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">경기 과천시 (84.02)</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">강원 양구군 (84.16)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Domain 3 -->
+                <div class="glass-card p-5 rounded-2xl flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-lg border border-indigo-500/30">
+                                <i class="fa-solid fa-person-walking"></i>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                                보행 환경 척도
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mt-3">보행자</h3>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                            도시 설계의 기본 안전성과 보행 인프라(보도 분리, 횡단보도 안전 시설)의 질적 수준 직접 투영.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1.5">
+                        <div class="text-[11px] font-semibold text-slate-400">대표 우수 지자체 (A등급)</div>
+                        <div class="flex flex-wrap gap-1.5 text-xs">
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">강원 삼척시 (83.27)</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">경기 광주시 (81.54)</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">인천 동구 (82.34)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Domain 4 -->
+                <div class="glass-card p-5 rounded-2xl flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-lg border border-purple-500/30">
+                                <i class="fa-solid fa-child-reaching"></i>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                사회안전망 지수
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mt-3">교통약자</h3>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                            어린이 보호구역 및 고령자 안전 대책 성과 측정. 초고령화 농어촌 지역의 핵심 안전 지표.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1.5">
+                        <div class="text-[11px] font-semibold text-slate-400">대표 우수 지자체 (A등급)</div>
+                        <div class="flex flex-wrap gap-1.5 text-xs">
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">충남 계룡시 (85.31)</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">전남 영광군 (84.78)</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">인천 동구 (84.54)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Domain 5 -->
+                <div class="glass-card p-5 rounded-2xl flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-lg border border-sky-500/30">
+                                <i class="fa-solid fa-id-card"></i>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">
+                                인적 요인 척도
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mt-3">운전자</h3>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                            신호 준수, 안전 운전 문화 및 음주·과속 준수율 반영. 인적 요인 사고 예방 역량 가늠자.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1.5">
+                        <div class="text-[11px] font-semibold text-slate-400">대표 우수 지자체 (A등급)</div>
+                        <div class="flex flex-wrap gap-1.5 text-xs">
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">경기 군포시 (83.84)</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">경남 진주시 (80.30)</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">강원 양구군 (84.53)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Domain 6 -->
+                <div class="glass-card p-5 rounded-2xl flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div class="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-lg border border-rose-500/30">
+                                <i class="fa-solid fa-road"></i>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                                물리적 인프라
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mt-3">도로환경</h3>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                            도로 설비의 기하 구조적 안정성, 교통 혼잡도 및 안전 시설물 확충 정밀도 반영.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 space-y-1.5">
+                        <div class="text-[11px] font-semibold text-slate-400">대표 우수 지자체 (A등급)</div>
+                        <div class="flex flex-wrap gap-1.5 text-xs">
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">충남 계룡시 (87.47)</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">전북 장수군 (86.87)</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">서울 광진구 (85.01)</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Searchable Data Table Section -->
+        <section class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-5">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-indigo-400"></i>
+                        주요 평가 지자체 통계 데이터 탐색기
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">그룹별 상·하위 주요 지자체 데이터 통합 검색 및 필터링</p>
+                </div>
+
+                <!-- Search & Filters -->
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <div class="relative min-w-[180px] sm:min-w-[220px]">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="지자체명 검색..." class="w-full bg-slate-900 text-xs text-slate-200 placeholder-slate-500 pl-9 pr-3 py-2 rounded-xl border border-slate-800 focus:outline-none focus:border-blue-500 transition">
+                    </div>
+
+                    <select id="groupFilter" onchange="filterTable()" class="bg-slate-900 text-xs text-slate-200 py-2 px-3 rounded-xl border border-slate-800 focus:outline-none focus:border-blue-500">
+                        <option value="ALL">전체 그룹</option>
+                        <option value="under30k">30만 미만 시</option>
+                        <option value="over30k">30만 이상 시</option>
+                        <option value="gu">구 그룹</option>
+                        <option value="gun">군 그룹</option>
+                    </select>
+
+                    <select id="gradeFilter" onchange="filterTable()" class="bg-slate-900 text-xs text-slate-200 py-2 px-3 rounded-xl border border-slate-800 focus:outline-none focus:border-blue-500">
+                        <option value="ALL">전체 등급</option>
+                        <option value="A">A 등급만</option>
+                        <option value="E">E 등급만</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800 bg-slate-900/60">
+                <table class="w-full text-xs text-left text-slate-300">
+                    <thead class="text-xs text-slate-400 uppercase bg-slate-900 border-b border-slate-800 font-semibold">
+                        <tr>
+                            <th scope="col" class="px-4 py-3">그룹</th>
+                            <th scope="col" class="px-4 py-3">그룹내 순위</th>
+                            <th scope="col" class="px-4 py-3">지자체명</th>
+                            <th scope="col" class="px-4 py-3 text-right">전체 점수</th>
+                            <th scope="col" class="px-4 py-3 text-center">전체 등급</th>
+                            <th scope="col" class="px-4 py-3">특이사항 / 취약·강점 영역</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fullDataTableBody" class="divide-y divide-slate-800/80">
+                        <!-- Rendered via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex justify-between items-center text-[11px] text-slate-500 pt-1">
+                <span id="rowCountText">표시 중: 24개 지자체</span>
+                <span>* 상세 분석 대상 표본 지자체 목록입니다.</span>
+            </div>
+        </section>
+
+        <!-- Policy Recommendations Section -->
+        <section class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-compass-drafting text-amber-400"></i>
+                    종합 시사점 및 정책 제언
+                </h2>
+                <p class="text-xs text-slate-400 mt-1">2024년 통계 분석 결과 바탕 맞춤형 개선 가이드라인</p>
+            </div>
+
+            <!-- Core Insight Box -->
+            <div class="p-4 rounded-xl bg-blue-950/30 border border-blue-800/50 flex flex-col md:flex-row items-start md:items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center text-2xl flex-shrink-0">
+                    <i class="fa-solid fa-quote-left"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-blue-300">핵심 관전 포인트: '도시 밀집도'와 '도로 인프라의 질적 차이'</h3>
+                    <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                        교통안전 수준은 단순 행정력보다 도심 밀집에 따른 교통량 과부하, 사업용 차량 유동량, 그리고 지역별 도로 구조 및 안전 시설물 설치 정도에 의해 결정되는 경향이 통계적으로 명확히 입증되었습니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Two Columns for Urban vs Rural Policy -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Urban Policy -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="flex items-center space-x-2 text-blue-400 font-bold text-sm border-b border-slate-800 pb-2">
+                        <i class="fa-solid fa-city"></i>
+                        <span>도시권 (시/구 그룹) 정책 과제</span>
+                    </div>
+                    <ul class="space-y-2.5 text-xs text-slate-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-blue-400 mt-0.5 text-[10px]"></i>
+                            <span><strong>사업용 차량 관리 강화:</strong> 강남·송파·천안 등 유동량 및 상업 차량이 많은 지역 대상 사고 연관성 모니터링 및 실시간 안전 관리 조치.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-blue-400 mt-0.5 text-[10px]"></i>
+                            <span><strong>도로환경 병목 개선:</strong> 인프라 확충 속도가 교통 수요를 못 따라가는 구간의 기하구조 정비 및 입체 교차화 검토.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-blue-400 mt-0.5 text-[10px]"></i>
+                            <span><strong>운전자 준수율 제고:</strong> 신호위반 및 불법주정차 단속 모니터링 장비 확충으로 인적 요인 사고 최소화.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Rural Policy -->
+                <div class="glass-card p-5 rounded-xl space-y-3">
+                    <div class="flex items-center space-x-2 text-emerald-400 font-bold text-sm border-b border-slate-800 pb-2">
+                        <i class="fa-solid fa-tree"></i>
+                        <span>농어촌권 (군 그룹) 정책 과제</span>
+                    </div>
+                    <ul class="space-y-2.5 text-xs text-slate-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 text-[10px]"></i>
+                            <span><strong>교통약자(고령자) 맞춤 안전망:</strong> 초고령 사회에 맞춰 노인 보호구역 확대, 조명 시설 개선, 마을 주민 대상 야간 보행 안전 조치.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 text-[10px]"></i>
+                            <span><strong>도로 안전 시설 보강:</strong> 의성군 등 취약 지역 대상 신호등, 발광형 표지판, 미끄럼 방지 포장 등 기본 인프라 확충.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 text-[10px]"></i>
+                            <span><strong>농기계 및 이륜차 사고 예방:</strong> 농번기 안전 반사판 부착 및 이륜차 안전모 착용 홍보 체계 구축.</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© 2024 대한민국 지자체 교통안전지수 분석 보고서 | 통계 기반 정책 우선순위 도출 Dashboard</p>
+            <p class="mt-1 text-[11px] text-slate-600">본 시스템은 공공 데이터 통계 자료를 바탕으로 시각화 및 정책 제언을 제공합니다.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Datasets for 4 Groups
+        const groupData = {
+            under30k: {
+                badge: '인구 30만 미만 시 (49개)',
+                title: '인구 30만 미만 시 그룹 분석',
+                gapText: '점수 편차: 14.93점 (최상위 vs 최하위)',
+                desc: '1위 계룡시(84.76점, A)와 최하위 경주시(69.83점, E) 간 점수 편차는 14.93점으로 지역 간 교통안전 격차가 뚜렷하게 관찰되었습니다.',
+                insight: '<strong>강점:</strong> 계룡시는 도로환경(87.47, A), 교통약자(85.31, A) 영역이 매우 우수.<br><strong>취약:</strong> 경주시는 도로환경(56.45, E)이 심각하게 저평가되었으며, 사업용자동차(72.93, E) 및 운전자(71.48, D) 도 개선 필요.',
+                topStats: [
+                    { rank: '1위', name: '충남 계룡시', score: '84.76', grade: 'A' },
+                    { rank: '2위', name: '경기 의왕시', score: '84.29', grade: 'A' },
+                    { rank: '3위', name: '경기 과천시', score: '84.04', grade: 'A' },
+                    { rank: '47위', name: '제주 서귀포시', score: '72.29', grade: 'E' },
+                    { rank: '48위', name: '전북 군산시', score: '70.98', grade: 'E' },
+                    { rank: '49위', name: '경북 경주시', score: '69.83', grade: 'E' }
+                ],
+                chartLabels: ['계룡시 (1위)', '의왕시 (2위)', '과천시 (3위)', '서귀포시 (47위)', '군산시 (48위)', '경주시 (49위)'],
+                chartScores: [84.76, 84.29, 84.04, 72.29, 70.98, 69.83]
+            },
+            over30k: {
+                badge: '인구 30만 이상 시 (29개)',
+                title: '인구 30만 이상 시 그룹 분석',
+                gapText: '점수 편차: 16.27점 (강원 원주 vs 충남 천안)',
+                desc: '강원 원주시가 최고점(81.57, A)을 기록한 반면, 충남 천안시는 최하위(65.30, E)로 16.27점의 큰 격차를 보였습니다.',
+                insight: '<strong>원주시 성과:</strong> 사업용자동차(82.51, A)와 도로환경(81.93, A) 성적이 뛰어나 균형을 이룸.<br><strong>구조적 취약점:</strong> 천안시(49.56, E)와 수원시(58.93, E)는 도로환경 정체 및 인프라 한계가 심각함. 천안시는 운전자 점수도 61.41(E)로 문화 개선 시급.',
+                topStats: [
+                    { rank: '1위', name: '강원 원주시', score: '81.57', grade: 'A' },
+                    { rank: '2위', name: '경기 안양시', score: '80.32', grade: 'A' },
+                    { rank: '3위', name: '세종 세종시', score: '77.68', grade: 'A' },
+                    { rank: '27위', name: '충북 청주시', score: '67.43', grade: 'E' },
+                    { rank: '28위', name: '경기 수원시', score: '67.04', grade: 'E' },
+                    { rank: '29위', name: '충남 천안시', score: '65.30', grade: 'E' }
+                ],
+                chartLabels: ['원주시 (1위)', '안양시 (2위)', '세종시 (3위)', '청주시 (27위)', '수원시 (28위)', '천안시 (29위)'],
+                chartScores: [81.57, 80.32, 77.68, 67.43, 67.04, 65.30]
+            },
+            gu: {
+                badge: '자치구 그룹 (69개)',
+                title: '구(Districts) 그룹 분석',
+                gapText: '점수 편차: 17.83점 (인천 동구 vs 서울 송파구)',
+                desc: '인천 동구(83.80, A)가 1위, 서울 송파구(65.97, E)가 최하위로 전국 그룹 중 가장 큰 편차(17.83점)를 기록하였습니다.',
+                insight: '<strong>서울 내부 극심한 격차:</strong> 광진구(82.97, A)는 도로환경(85.01)과 보행자(82.63) 우수.<br><strong>강남·송파 취약성:</strong> 인구 밀집 도심인 강남구와 송파구는 사업용자동차 영역에서 각각 64.30(E), 66.63(E)점을 기록해 상업 차량 유동 위험성을 반증함.',
+                topStats: [
+                    { rank: '1위', name: '인천 동구', score: '83.80', grade: 'A' },
+                    { rank: '2위', name: '서울 광진구', score: '82.97', grade: 'A' },
+                    { rank: '3위', name: '서울 성동구', score: '82.17', grade: 'A' },
+                    { rank: '67위', name: '대구 북구', score: '71.39', grade: 'E' },
+                    { rank: '68위', name: '서울 강남구', score: '68.74', grade: 'E' },
+                    { rank: '69위', name: '서울 송파구', score: '65.97', grade: 'E' }
+                ],
+                chartLabels: ['인천 동구 (1위)', '서울 광진구 (2위)', '서울 성동구 (3위)', '대구 북구 (67위)', '서울 강남구 (68위)', '서울 송파구 (69위)'],
+                chartScores: [83.80, 82.97, 82.17, 71.39, 68.74, 65.97]
+            },
+            gun: {
+                badge: '군 단위 그룹 (80개)',
+                title: '군(Counties) 그룹 분석',
+                gapText: '점수 편차: 11.91점 (상향 평준화 속 격차)',
+                desc: '군 그룹은 전체 점수가 상향 평준화되어 있으나, 일부 지역의 도로 환경 및 고령자 교통약자 지표에서 유의미한 하락세가 관찰되었습니다.',
+                insight: '<strong>양구군 성과:</strong> 1위 양구군(84.10)은 자전거/이륜차(84.16), 도로환경(86.96) 등 최상위 등급 유지.<br><strong>의성군 복합 취약:</strong> 최하위 의성군(72.19)은 도로환경(68.17, E)뿐 아니라 고령 인구가 많은 교통약자 영역(61.99, E)에서도 심각한 취약성을 보임.',
+                topStats: [
+                    { rank: '1위', name: '강원 양구군', score: '84.10', grade: 'A' },
+                    { rank: '2위', name: '전북 장수군', score: '84.09', grade: 'A' },
+                    { rank: '3위', name: '전남 영광군', score: '84.08', grade: 'A' },
+                    { rank: '78위', name: '충남 홍성군', score: '73.38', grade: 'E' },
+                    { rank: '79위', name: '전남 담양군', score: '72.61', grade: 'E' },
+                    { rank: '80위', name: '경북 의성군', score: '72.19', grade: 'E' }
+                ],
+                chartLabels: ['양구군 (1위)', '장수군 (2위)', '영광군 (3위)', '홍성군 (78위)', '담양군 (79위)', '의성군 (80위)'],
+                chartScores: [84.10, 84.09, 84.08, 73.38, 72.61, 72.19]
+            }
+        };
+
+        // Master List for Table Searching
+        const masterTableData = [
+            // 30m under
+            { groupKey: 'under30k', groupName: '30만미만 시', rank: 1, name: '충남 계룡시', score: 84.76, grade: 'A', note: '도로환경(87.47, A), 교통약자(85.31, A) 매우 우수' },
+            { groupKey: 'under30k', groupName: '30만미만 시', rank: 2, name: '경기 의왕시', score: 84.29, grade: 'A', note: '전 영역 고른 상위 등급 유지' },
+            { groupKey: 'under30k', groupName: '30만미만 시', rank: 3, name: '경기 과천시', score: 84.04, grade: 'A', note: '자전거/이륜차(84.02, A) 강점' },
+            { groupKey: 'under30k', groupName: '30만미만 시', rank: 47, name: '제주 서귀포시', score: 72.29, grade: 'E', note: '관광객 유동 vehicle 및 도로 여건 취약' },
+            { groupKey: 'under30k', groupName: '30만미만 시', rank: 48, name: '전북 군산시', score: 70.98, grade: 'E', note: '사업용 차량 관리 및 보행 안전 보강 필요' },
+            { groupKey: 'under30k', groupName: '30만미만 시', rank: 49, name: '경북 경주시', score: 69.83, grade: 'E', note: '도로환경(56.45, E), 사업용 vehicle(72.93, E) 극심한 취약' },
+
+            // 30m over
+            { groupKey: 'over30k', groupName: '30만이상 시', rank: 1, name: '강원 원주시', score: 81.57, grade: 'A', note: '사업용자동차(82.51, A), 도로환경(81.93, A)' },
+            { groupKey: 'over30k', groupName: '30만이상 시', rank: 2, name: '경기 안양시', score: 80.32, grade: 'A', note: '도로환경(82.75, A) 인프라 구축 우수' },
+            { groupKey: 'over30k', groupName: '30만이상 시', rank: 3, name: '세종 세종시', score: 77.68, grade: 'A', note: '도시 설계 안전성 지속 유지' },
+            { groupKey: 'over30k', groupName: '30만이상 시', rank: 27, name: '충북 청주시', score: 67.43, grade: 'E', note: '도심 교통 혼잡 및 도로 관리 개선 시급' },
+            { groupKey: 'over30k', groupName: '30만이상 시', rank: 28, name: '경기 수원시', score: 67.04, grade: 'E', note: '도로환경(58.93, E) 정체 및 용량 한계' },
+            { groupKey: 'over30k', groupName: '30만이상 시', rank: 29, name: '충남 천안시', score: 65.30, grade: 'E', note: '도로환경(49.56, E), 운전자(61.41, E) 전국 최하위권' },
+
+            // gu
+            { groupKey: 'gu', groupName: '구 그룹', rank: 1, name: '인천 동구', score: 83.80, grade: 'A', note: '보행자(82.34, A), 교통약자(84.54, A) 우수' },
+            { groupKey: 'gu', groupName: '구 그룹', rank: 2, name: '서울 광진구', score: 82.97, grade: 'A', note: '도로환경(85.01, A), 보행자(82.63, A) 높은 안전성' },
+            { groupKey: 'gu', groupName: '구 그룹', rank: 3, name: '서울 성동구', score: 82.17, grade: 'A', note: '보행 환경 중심 지표 우수' },
+            { groupKey: 'gu', groupName: '구 그룹', rank: 67, name: '대구 북구', score: 71.39, grade: 'E', note: '운전자 준수율 및 도심 환경 저평가' },
+            { groupKey: 'gu', groupName: '구 그룹', rank: 68, name: '서울 강남구', score: 68.74, grade: 'E', note: '사업용자동차(64.30, E) 상업 차량 위험도' },
+            { groupKey: 'gu', groupName: '구 그룹', rank: 69, name: '서울 송파구', score: 65.97, grade: 'E', note: '전국 구 최하위. 사업용자동차(66.63, E) 취약' },
+
+            // gun
+            { groupKey: 'gun', groupName: '군 그룹', rank: 1, name: '강원 양구군', score: 84.10, grade: 'A', note: '자전거/이륜(84.16, A), 도로환경(86.96, A) 최고 수준' },
+            { groupKey: 'gun', groupName: '군 그룹', rank: 2, name: '전북 장수군', score: 84.09, grade: 'A', note: '도로환경(86.87, A) 인프라 우수' },
+            { groupKey: 'gun', groupName: '군 그룹', rank: 3, name: '전남 영광군', score: 84.08, grade: 'A', note: '교통약자(84.78, A) 고령화 대책 성과' },
+            { groupKey: 'gun', groupName: '군 그룹', rank: 78, name: '충남 홍성군', score: 73.38, grade: 'E', note: '신도시 및 농촌 교차지점 사고 위험' },
+            { groupKey: 'gun', groupName: '군 그룹', rank: 79, name: '전남 담양군', score: 72.61, grade: 'E', note: '도로 설비 확충 및 운전자 문화 필요' },
+            { groupKey: 'gun', groupName: '군 그룹', rank: 80, name: '경북 의성군', score: 72.19, grade: 'E', note: '도로환경(68.17, E), 교통약자(61.99, E) 복합 취약' }
+        ];
+
+        let currentChart = null;
+
+        function renderGroupData(key) {
+            const data = groupData[key];
+            if (!data) return;
+
+            document.getElementById('groupBadge').innerText = data.badge;
+            document.getElementById('groupTitle').innerText = data.title;
+            document.getElementById('groupGapText').innerHTML = `<i class="fa-solid fa-arrows-left-right mr-1"></i> ${data.gapText}`;
+            document.getElementById('groupDesc').innerText = data.desc;
+            document.getElementById('groupInsightText').innerHTML = data.insight;
+
+            // Render Table
+            const summaryTable = document.getElementById('groupSummaryTable');
+            summaryTable.innerHTML = data.topStats.map(item => `
+                <tr class="hover:bg-slate-800/50 transition">
+                    <td class="py-2 text-slate-400 font-semibold">${item.rank}</td>
+                    <td class="py-2 text-white font-bold">${item.name}</td>
+                    <td class="py-2 text-right font-bold text-blue-300">${item.score}점</td>
+                    <td class="py-2 text-center">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.grade === 'A' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">
+                            ${item.grade}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Render Chart
+            renderChart(data.chartLabels, data.chartScores);
+        }
+
+        function switchGroup(key) {
+            // Tab active styling
+            document.querySelectorAll('#groupTabs .tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+                btn.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-800');
+            });
+
+            const activeBtn = document.getElementById(`tab-${key}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-slate-800');
+                activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+            }
+
+            renderGroupData(key);
+        }
+
+        function renderChart(labels, scores) {
+            const ctx = document.getElementById('groupChart').getContext('2d');
+
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            // Generate dynamic colors based on high vs low
+            const backgroundColors = scores.map(score => {
+                return score >= 80 
+                    ? 'rgba(16, 185, 129, 0.75)' 
+                    : 'rgba(239, 68, 68, 0.75)';
+            });
+
+            const borderColors = scores.map(score => {
+                return score >= 80 ? '#10b981' : '#ef4444';
+            });
+
+            currentChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '교통안전지수 점수',
+                        data: scores,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1.5,
+                        borderRadius: 6,
+                        barThickness: 24
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` 지수: ${context.raw} 점`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 45,
+                            max: 90,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            },
+                            ticks: {
+                                color: '#94a3b8',
+                                font: { size: 11 }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#cbd5e1',
+                                font: { size: 11, weight: '500' }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderFullTable(data) {
+            const tbody = document.getElementById('fullDataTableBody');
+            tbody.innerHTML = data.map(item => `
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700">
+                            ${item.groupName}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 font-semibold text-slate-400">${item.rank}위</td>
+                    <td class="px-4 py-3 font-bold text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-location-dot text-blue-500 text-[10px]"></i>
+                        ${item.name}
+                    </td>
+                    <td class="px-4 py-3 text-right font-extrabold text-blue-300">${item.score}</td>
+                    <td class="px-4 py-3 text-center">
+                        <span class="px-2.5 py-0.5 rounded text-xs font-black ${item.grade === 'A' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">
+                            ${item.grade}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-xs text-slate-300">${item.note}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('rowCountText').innerText = `표시 중: ${data.length}개 지자체`;
+        }
+
+        function filterTable() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const selectedGroup = document.getElementById('groupFilter').value;
+            const selectedGrade = document.getElementById('gradeFilter').value;
+
+            const filtered = masterTableData.filter(item => {
+                const matchesSearch = item.name.toLowerCase().includes(searchValue) || item.note.toLowerCase().includes(searchValue);
+                const matchesGroup = (selectedGroup === 'ALL') || (item.groupKey === selectedGroup);
+                const matchesGrade = (selectedGrade === 'ALL') || (item.grade === selectedGrade);
+                return matchesSearch && matchesGroup && matchesGrade;
+            });
+
+            renderFullTable(filtered);
+        }
+
+        window.onload = function() {
+            // Initial group chart load
+            renderGroupData('under30k');
+            // Initial master table load
+            renderFullTable(masterTableData);
+        };
+    </script>
+</body>
+</html>
