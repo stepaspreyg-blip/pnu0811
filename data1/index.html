@@ -1,646 +1,702 @@
 <!DOCTYPE html>
-<html lang="ko" class="dark">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>차윤겸 | 데이터 분석 포트폴리오</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: '#f0f7ff',
-              100: '#e0effe',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2027학년도 주요 대학 수시 모집 입시 비교 분석 보고서</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Noto Sans KR) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        khu: {
+                            red: '#990000',
+                            gold: '#C5A059',
+                            dark: '#1E293B',
+                            light: '#F8FAFC',
+                            accent: '#2563EB'
+                        }
+                    }
+                }
             }
-          }
         }
-      }
-    }
-  </script>
-  
-  <!-- FontAwesome Icons & Chart.js -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <style>
-    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-    body {
-      font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malformed Gothic", sans-serif;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-    
-    .glass-card {
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(156, 163, 175, 0.4);
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(156, 163, 175, 0.7);
-    }
-  </style>
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 3px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
 </head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-red-900 selection:text-white">
 
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
-
-  <!-- Navigation Header -->
-  <header class="fixed top-0 w-full z-40 bg-white/80 dark:bg-slate-900/80 glass-card border-b border-slate-200 dark:border-slate-800 transition-colors">
-    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-      <!-- Logo -->
-      <a href="../index.html" class="text-xl font-extrabold tracking-tight flex items-center gap-2">
-        <span class="p-2 rounded-lg bg-indigo-600 text-white text-xs font-bold">CYG</span>
-        <span class="bg-gradient-to-r from-indigo-600 via-sky-500 to-emerald-500 dark:from-indigo-400 dark:via-sky-400 dark:to-emerald-400 bg-clip-text text-transparent">차윤겸</span>
-      </a>
-
-      <!-- Menu & Theme Switcher -->
-      <div class="flex items-center gap-6">
-        <nav class="hidden md:flex space-x-6 text-sm font-medium text-slate-600 dark:text-slate-300">
-          <a href="../index.html" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition flex items-center gap-1.5"><i class="fa-solid fa-house text-xs"></i> 홈</a>
-          <a href="#about" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">소개</a>
-          <a href="#reports" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">보고서 카드</a>
-          <a href="#skills" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">기술 스택</a>
-          <a href="#contact" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">연락처</a>
-        </nav>
-
-        <div class="flex items-center gap-2">
-          <!-- Home Button -->
-          <a href="../index.html" title="홈으로 이동" aria-label="홈으로 이동" 
-             class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center text-xs font-semibold gap-1.5">
-            <i class="fa-solid fa-house"></i>
-            <span class="hidden sm:inline">홈</span>
-          </a>
-
-          <!-- Theme Toggle Button -->
-          <button id="theme-toggle" type="button" aria-label="테마 변경" 
-                  class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center">
-            <i id="theme-toggle-dark-icon" class="fa-solid fa-moon text-base hidden"></i>
-            <i id="theme-toggle-light-icon" class="fa-solid fa-sun text-base hidden"></i>
-          </button>
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-slate-900 text-white shadow-xl border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="../index.html" class="flex items-center gap-1.5 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-lg transition border border-slate-700">
+                    <i data-lucide="home" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">홈으로</span>
+                </a>
+                <button onclick="window.print()" class="flex items-center gap-1.5 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-lg transition border border-slate-700">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    <span class="hidden md:inline">보고서 인쇄/PDF</span>
+                </button>
+                <a href="#simulator" class="flex items-center gap-1.5 text-xs font-semibold bg-red-700 hover:bg-red-800 text-white px-3.5 py-2 rounded-lg transition shadow-md">
+                    <i data-lucide="calculator" class="w-4 h-4"></i>
+                    <span>감점 계산기</span>
+                </a>
+            </div>
         </div>
-      </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+
+        <!-- Sidebar Navigation -->
+        <aside class="lg:w-64 flex-shrink-0">
+            <div class="sticky top-20 space-y-4">
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80">
+                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">목차 바로가기</h2>
+                    <nav class="space-y-1 text-sm font-medium">
+                        <a href="#summary" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 text-slate-400"></i> 핵심 요약
+                        </a>
+                        <a href="#key-changes" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-slate-400"></i> 1. 주요 변화 & 기조
+                        </a>
+                        <a href="#free-major" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="compass" class="w-4 h-4 text-slate-400"></i> 2. 무전공(전공자율)
+                        </a>
+                        <a href="#new-depts" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-slate-400"></i> 3. 신설/특성화 학과
+                        </a>
+                        <a href="#medical" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="activity" class="w-4 h-4 text-slate-400"></i> 4. 의·약학 계열 분석
+                        </a>
+                        <a href="#eval-standards" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="file-check-2" class="w-4 h-4 text-slate-400"></i> 5. 평가요소 & 감점
+                        </a>
+                        <a href="#simulator" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="shield-alert" class="w-4 h-4 text-slate-400"></i> 6. 감점 시뮬레이터
+                        </a>
+                        <a href="#strategy" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-red-700 transition">
+                            <i data-lucide="target" class="w-4 h-4 text-slate-400"></i> 7. 실전 지원 전략
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Info Box -->
+                <div class="bg-gradient-to-br from-red-900 to-slate-900 text-white p-4 rounded-2xl shadow-md border border-red-800/40">
+                    <div class="flex items-center gap-2 text-red-300 font-bold text-xs uppercase mb-1">
+                        <i data-lucide="info" class="w-4 h-4"></i> 핵심 포인트
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed">
+                        학폭 8호 처분 시 감점이 <strong>40%</strong>로 급증하였습니다. 근태와 인성 평가가 수시 합불의 절대적 제약 요소로 작용합니다.
+                    </p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 space-y-10 min-w-0">
+
+            <!-- Executive Hero Summary -->
+            <section id="summary" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="border-b border-slate-100 pb-5 mb-6">
+                    <div class="flex items-center gap-2 text-red-700 font-semibold text-sm mb-1">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> 입시 종합 브리핑
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                        2027학년도 주요 대학 수시 모집 입시 비교 분석 보고서
+                    </h2>
+                    <p class="text-slate-500 text-sm mt-2 leading-relaxed">
+                        본 보고서는 2027학년도 경희대학교 수시 모집요강 및 주요 대학 입시 자료를 기반으로 수험생과 학부모의 전략적 의사결정을 돕기 위해 작성되었습니다.
+                    </p>
+                </div>
+
+                <!-- KPI Metric Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs text-slate-500 font-medium">무전공 선발 총원</span>
+                        <div class="text-2xl font-black text-slate-900 mt-1">391<span class="text-sm font-normal text-slate-600">명</span></div>
+                        <p class="text-[11px] text-slate-500 mt-1">서울 150명 / 국제 241명</p>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs text-slate-500 font-medium">네오르네상스 모집</span>
+                        <div class="text-2xl font-black text-slate-900 mt-1">1,076<span class="text-sm font-normal text-slate-600">명</span></div>
+                        <p class="text-[11px] text-emerald-600 font-medium mt-1">↑ 전년 대비 8명 증원</p>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs text-slate-500 font-medium">학폭 8호 감점 폭</span>
+                        <div class="text-2xl font-black text-red-700 mt-1">40<span class="text-sm font-normal text-red-600">%</span></div>
+                        <p class="text-[11px] text-red-600 font-medium mt-1">전년(5%) 대비 8배 상향</p>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs text-slate-500 font-medium">간호학과 최저 기준</span>
+                        <div class="text-2xl font-black text-blue-700 mt-1">미적용</div>
+                        <p class="text-[11px] text-blue-600 font-medium mt-1">네오르네상스(종합) 기준</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 1. 주요 변화 및 핵심 기조 -->
+            <section id="key-changes" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">1</span>
+                    <h3 class="text-xl font-bold text-slate-900">2027학년도 수시 모집 주요 변화 및 핵심 기조 분석</h3>
+                </div>
+
+                <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                    경희대학교 수시 모집은 <strong>'학생 전공 선택권 확대'</strong>, <strong>'첨단 분야 인재 확보'</strong>, <strong>'학생부 평가의 정교화'</strong>라는 세 가지 축을 중심으로 개편되었습니다.
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:border-slate-300 transition">
+                        <div class="flex items-center gap-2 font-bold text-slate-900 mb-2 text-base">
+                            <i data-lucide="layers" class="w-5 h-5 text-red-700"></i> 전공자율선택제(무전공) 전면 확대
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            서울캠퍼스 자율전공학부(150명) 및 국제캠퍼스 자유전공학부(241명)를 중심으로 입학 후 계열 구분 없는 자유로운 전공 선택 기회를 대폭 보장합니다.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:border-slate-300 transition">
+                        <div class="flex items-center gap-2 font-bold text-slate-900 mb-2 text-base">
+                            <i data-lucide="sliders" class="w-5 h-5 text-red-700"></i> 전형 유형 및 인원 미세 조정
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            학생부종합(네오르네상스)은 1,076명(+8명), 논술우수자전형은 471명(-3명)으로 미세 조정되었으나 주력 전형의 틀은 안정적으로 유지됩니다.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:border-slate-300 transition">
+                        <div class="flex items-center gap-2 font-bold text-slate-900 mb-2 text-base">
+                            <i data-lucide="refresh-cw" class="w-5 h-5 text-red-700"></i> 기회균형전형 구조적 개편
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            '기회균형전형Ⅰ-특성화고 등을 졸업한 재직자' 전형이 학생부종합에서 <strong>학생부교과전형</strong>으로 전환되며, 1단계 교과 100%, 2단계 면접 30% 다단계 선발로 바뀌었습니다.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:border-slate-300 transition">
+                        <div class="flex items-center gap-2 font-bold text-slate-900 mb-2 text-base">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 text-red-700"></i> 감점 및 근태 평가 엄격화
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            출결 평가 시 미인정 지각·조퇴·결과를 포함(2회당 결석 1일 환산)하며, 학교폭력 조치에 따른 정량 감점 폭이 비약적으로 상향되었습니다.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. 전공자율선택제(무전공) 도입 및 운영 현황 -->
+            <section id="free-major" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">2</span>
+                    <h3 class="text-xl font-bold text-slate-900">전공자율선택제 (무전공) 운영 현황</h3>
+                </div>
+
+                <p class="text-sm text-slate-600 mb-6">
+                    캠퍼스별 무전공 모집 단위 운영 방식 및 진학 후 제한 사항을 상세히 비교하였습니다.
+                </p>
+
+                <!-- Comparison Table -->
+                <div class="overflow-x-auto rounded-2xl border border-slate-200 mb-6">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                <th class="p-3.5">구분</th>
+                                <th class="p-3.5">모집 단위</th>
+                                <th class="p-3.5">인원</th>
+                                <th class="p-3.5">전공 선택 범위 및 제한 사항</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 text-slate-600">
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3.5 font-bold text-slate-900">서울</td>
+                                <td class="p-3.5 font-semibold text-red-800">자율전공학부</td>
+                                <td class="p-3.5 font-bold">150명</td>
+                                <td class="p-3.5">
+                                    서울캠퍼스 내 개설 학부(과) 100% 자유 선택<br>
+                                    <span class="text-red-600 font-medium">※ 제외: 의예, 한의예, 치의예, 약학, 한약학, 간호학, 미래정보디스플레이, 예술계열, 특성화고재직자 전형 학과</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3.5 font-bold text-slate-900">국제</td>
+                                <td class="p-3.5 font-semibold text-blue-800">자유전공학부</td>
+                                <td class="p-3.5 font-bold">241명</td>
+                                <td class="p-3.5">
+                                    국제캠퍼스 내 개설 학부(과) 100% 자유 선택<br>
+                                    <span class="text-red-600 font-medium">※ 제외: 예술·디자인대학 PostModern음악학과, 특성화고재직자 전형 학과</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-amber-50/80 p-4 rounded-2xl border border-amber-200/60">
+                        <h4 class="text-xs font-bold text-amber-900 flex items-center gap-1.5 mb-1">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-amber-700"></i> 융합형 학사 제도 의무화
+                        </h4>
+                        <p class="text-xs text-amber-800 leading-relaxed">
+                            2027학년도 신입생은 다전공, 부전공, 마이크로디그리 중 하나 이상을 반드시 이수해야 졸업이 가능합니다. (단, 의약학/간호계열 등 제외)
+                        </p>
+                    </div>
+
+                    <div class="bg-blue-50/80 p-4 rounded-2xl border border-blue-200/60">
+                        <h4 class="text-xs font-bold text-blue-900 flex items-center gap-1.5 mb-1">
+                            <i data-lucide="git-merge" class="w-4 h-4 text-blue-700"></i> 계열 내 100% 자율 선택 모집 단위
+                        </h4>
+                        <ul class="text-xs text-blue-800 space-y-1 list-disc list-inside">
+                            <li><strong>경영대학 경영회계계열:</strong> 경영학과, 회계학과</li>
+                            <li><strong>호텔관광대학:</strong> 관광학과, 문화엔터테인먼트학과</li>
+                            <li><strong>공과대학 기계공학부:</strong> 기계, 지능로봇, 항공우주모빌리티</li>
+                            <li><strong>외국어대학:</strong> 영미어문, 영미문화전공</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. 2027학년도 신설 학과 및 특성화 학과 안내 -->
+            <section id="new-depts" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">3</span>
+                    <h3 class="text-xl font-bold text-slate-900">신설 학과 및 6대 중점 학문 분야</h3>
+                </div>
+
+                <!-- New Dept Highlight Card -->
+                <div class="bg-gradient-to-r from-slate-900 to-red-950 text-white rounded-2xl p-6 mb-6 shadow-lg">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">2027 신설 학과</span>
+                        <span class="text-slate-300 text-xs font-mono">정원 외 40명</span>
+                    </div>
+                    <h4 class="text-2xl font-black mb-2">지능형전자시스템학과</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                        첨단 전자 및 반도체 산업 현장 맞춤형 인재를 양성하기 위한 전담 학과로 신설되었습니다.
+                    </p>
+                    <div class="grid sm:grid-cols-2 gap-3 text-xs bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/10">
+                        <div><strong class="text-red-300">모집 유형:</strong> 학생부교과 (기회균형전형Ⅰ - 특성화고재직자)</div>
+                        <div><strong class="text-red-300">전형 방법:</strong> 1단계 교과 100% → 2단계 1단계 70% + 면접 30%</div>
+                    </div>
+                </div>
+
+                <!-- 6 Major Academic Fields -->
+                <h4 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-1.5">
+                    <i data-lucide="award" class="w-4 h-4 text-red-700"></i> 경희대 6대 중점 학문 분야 연구 성과
+                </h4>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                    <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+                        <div class="font-bold text-slate-900 mb-1">🚀 우주과학</div>
+                        <p class="text-slate-500">다누리호 자기장 측정기 개발 등 독보적 연구 역량 보유</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+                        <div class="font-bold text-slate-900 mb-1">🧬 바이오헬스/AI</div>
+                        <p class="text-slate-500">의료 AI 융합인재 사업 및 자체 ChatKHU AI 플랫폼 개발</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+                        <div class="font-bold text-slate-900 mb-1">⚛️ 양자과학</div>
+                        <p class="text-slate-500">노벨상 수상자 등 석학 초빙 및 글로벌 양자 연구센터 운영</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+                        <div class="font-bold text-slate-900 mb-1">🔬 첨단소재</div>
+                        <p class="text-slate-500">차세대 반도체 및 신소재 글로벌 연구 네트워크 구축</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+                        <div class="font-bold text-slate-900 mb-1">🤖 인공지능(AI)</div>
+                        <p class="text-slate-500">전 학문 분야 AI+X 융합 연구 및 교육 체계 도입</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+                        <div class="font-bold text-slate-900 mb-1">🌍 인류문명</div>
+                        <p class="text-slate-500">지속가능 발전 및 글로벌 시민사회 리더십 육성</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. 의·약학 계열 수시 전형 비교 분석 -->
+            <section id="medical" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">4</span>
+                    <h3 class="text-xl font-bold text-slate-900">의·약학 계열 수시 전형 비교 분석</h3>
+                </div>
+
+                <p class="text-sm text-slate-600 mb-6">
+                    의예, 한의예, 치의예, 약학, 간호 계열은 모집 전형에 따라 수능 최저학력기준 유무가 크게 다릅니다.
+                </p>
+
+                <div class="overflow-x-auto rounded-2xl border border-slate-200 mb-4">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                <th class="p-3.5">전형 구분</th>
+                                <th class="p-3.5">네오르네상스전형 (학생부종합)</th>
+                                <th class="p-3.5">지역균형전형 (학생부교과)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 text-slate-600">
+                            <tr>
+                                <td class="p-3.5 font-bold text-slate-900 bg-slate-50/50">전형 요소</td>
+                                <td class="p-3.5">1단계: 서류 100%<br>2단계: 1단계 70% + 면접 30%</td>
+                                <td class="p-3.5">교과 70% + 비교과(출결/봉사) 30%<br>+ 교과종합평가(정성) 반영</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-bold text-slate-900 bg-slate-50/50">수능 최저기준</td>
+                                <td class="p-3.5 font-semibold text-amber-700">
+                                    있음 <span class="text-red-600 font-bold">(단, 간호학과 제외★)</span>
+                                </td>
+                                <td class="p-3.5 font-semibold text-slate-900">있음 (전 모집단위 적용)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3.5 font-bold text-slate-900 bg-slate-50/50">평가 핵심</td>
+                                <td class="p-3.5">학생부 전체의 학업 및 진로 역량</td>
+                                <td class="p-3.5">교과 성적 우수성 및 교과 이수 충실도</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Callout Banner -->
+                <div class="bg-red-50 border-l-4 border-red-700 p-4 rounded-r-2xl text-xs text-red-900 flex items-start gap-3">
+                    <i data-lucide="star" class="w-5 h-5 text-red-700 flex-shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong class="font-bold text-sm block mb-1">핵심 전략 포인트: 간호학과 네오르네상스전형 수능 최저 없음!</strong>
+                        네오르네상스 전형의 간호학과는 의예·한의예·치의예·약학과와 달리 <strong>수능 최저학력기준이 적용되지 않습니다.</strong> 수능 부담이 크지만 학생부 경쟁력이 높은 학생에게 전략적 요충지가 됩니다.
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. 전형별 평가 요소 및 대학별 차이점 -->
+            <section id="eval-standards" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">5</span>
+                    <h3 class="text-xl font-bold text-slate-900">교과종합평가 및 평가 요소 상세 분석</h3>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <!-- Chart 1: Evaluation Weights -->
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col justify-between">
+                        <h4 class="text-xs font-bold text-slate-800 mb-3 flex items-center gap-1.5">
+                            <i data-lucide="pie-chart" class="w-4 h-4 text-red-700"></i> 지역균형 교과종합평가 반영 차이
+                        </h4>
+                        <div class="h-48 relative">
+                            <canvas id="evalChart"></canvas>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-3 leading-relaxed">
+                            <strong>자율/자유전공학부</strong> 지원 시 진로역량은 반영하지 않으며 <strong>학업역량 100%</strong>(성취도 50% + 탐구력 50%)로 평가합니다.
+                        </p>
+                    </div>
+
+                    <!-- Evaluation Factors Table -->
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                            <i data-lucide="check-square" class="w-4 h-4 text-red-700"></i> 서류평가 3대 반영 요소
+                        </h4>
+                        
+                        <div class="p-3.5 rounded-xl border border-slate-200 bg-white shadow-xs">
+                            <div class="flex justify-between font-bold text-xs text-slate-900 mb-1">
+                                <span>학업역량</span>
+                                <span class="text-red-700">40%</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500">성취도(25%), 학업태도 및 탐구력(15%). 기본 학업 성취 수준과 깊이 있는 탐구 활동 점검</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl border border-slate-200 bg-white shadow-xs">
+                            <div class="flex justify-between font-bold text-xs text-slate-900 mb-1">
+                                <span>진로역량</span>
+                                <span class="text-red-700">40%</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500">전공 관련 교과 이수 노력/성취(25%), 진로 탐색 활동(15%). (자율전공 지원 시 미반영)</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl border border-slate-200 bg-white shadow-xs">
+                            <div class="flex justify-between font-bold text-xs text-slate-900 mb-1">
+                                <span>공동체역량</span>
+                                <span class="text-red-700">20%</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500">협업/리더십(10%), 나눔/성실성(10%). 학교 규칙 준수 및 출결 근태 기록 검증</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. 감점 시뮬레이터 (출결 & 학교폭력) -->
+            <section id="simulator" class="bg-gradient-to-br from-slate-900 via-slate-800 to-red-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-600 text-white flex items-center justify-center font-bold text-sm">6</span>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">학교폭력 & 출결 감점 시뮬레이터</h3>
+                        <p class="text-xs text-slate-300">2027학년도 정량 평가 기준에 따른 실질 감점 영향을 계산해 보세요.</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- School Violence Section -->
+                    <div class="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm">
+                        <h4 class="text-sm font-bold text-red-300 mb-3 flex items-center gap-2">
+                            <i data-lucide="shield-alert" class="w-4 h-4"></i> 학교폭력 조치 사항 선택
+                        </h4>
+                        
+                        <label class="block text-xs text-slate-300 mb-2">학교폭력 처분 단계</label>
+                        <select id="violSelect" onchange="calculatePenalty()" class="w-full bg-slate-800 border border-slate-700 rounded-xl text-xs p-3 text-white focus:ring-2 focus:ring-red-500 outline-none">
+                            <option value="0">처분 사항 없음 (0점 감점)</option>
+                            <option value="1">제1호 ~ 제3호 (총점의 1% 감점)</option>
+                            <option value="4">제4호 ~ 제5호 (총점의 5% 감점)</option>
+                            <option value="6">제6호 ~ 제7호 (총점의 20% 감점)</option>
+                            <option value="8">제8호 (총점의 40% 감점) - ★경고★</option>
+                            <option value="9">제9호 (즉시 결격 / 불합격 처리)</option>
+                        </select>
+
+                        <div class="mt-4 p-3 rounded-xl bg-slate-900/80 border border-slate-700/80 text-xs">
+                            <div class="flex justify-between text-slate-400 mb-1">
+                                <span>학폭 감점률:</span>
+                                <span id="violPenaltyText" class="font-bold text-red-400">0%</span>
+                            </div>
+                            <p id="violDesc" class="text-[11px] text-slate-400">정상 지원 가능 상태입니다.</p>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Section -->
+                    <div class="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm">
+                        <h4 class="text-sm font-bold text-red-300 mb-3 flex items-center gap-2">
+                            <i data-lucide="clock" class="w-4 h-4"></i> 미인정 근태 일수 입력
+                        </h4>
+
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="block text-[11px] text-slate-300 mb-1">미인정 결석 (일)</label>
+                                <input type="number" id="absentInput" min="0" value="0" oninput="calculatePenalty()" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white text-center">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-300 mb-1">미인정 지각·조퇴·결과 (회)</label>
+                                <input type="number" id="tardyInput" min="0" value="0" oninput="calculatePenalty()" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white text-center">
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] text-slate-400 mb-3">※ 미인정 지각·조퇴·결과 2회 = 결석 1일로 환산 적용</p>
+
+                        <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-700/80 text-xs">
+                            <div class="flex justify-between text-slate-400 mb-1">
+                                <span>환산 결석 총일수:</span>
+                                <span id="totalAbsentDays" class="font-bold text-amber-400">0일</span>
+                            </div>
+                            <p id="attendDesc" class="text-[11px] text-slate-400">근태 감점 요인이 없습니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Assessment Box -->
+                <div class="mt-6 p-4 rounded-2xl bg-red-950/60 border border-red-800/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="alert-circle" class="w-6 h-6 text-red-400 flex-shrink-0"></i>
+                        <div>
+                            <div class="text-xs text-slate-300 font-semibold">종합 정량 감점 및 인성 위험도</div>
+                            <div id="finalStatusText" class="text-sm font-bold text-emerald-400 mt-0.5">안전 (감점 요인 없음)</div>
+                        </div>
+                    </div>
+                    <div class="text-xs bg-slate-900/90 text-slate-300 px-4 py-2 rounded-xl border border-slate-700">
+                        2027 경희대 반영 기준 준수
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. 수험생을 위한 실전 지원 전략 -->
+            <section id="strategy" class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">7</span>
+                    <h3 class="text-xl font-bold text-slate-900">수험생 맞춤 실전 수시 지원 전략</h3>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex gap-3.5 items-start">
+                        <div class="p-2 rounded-xl bg-red-100 text-red-700 font-bold text-xs flex-shrink-0 mt-0.5">교과</div>
+                        <div class="text-xs text-slate-700 space-y-1">
+                            <strong class="text-slate-900 font-bold block">지역균형전형 전략: 교과 성적 + 정성 평가 30%</strong>
+                            <p class="leading-relaxed text-slate-600">
+                                정량적 내신 우위 확보뿐만 아니라 30% 반영되는 '교과종합평가'에서 불이익이 없어야 합니다. 특히 미인정 출결 관리가 정량 감점으로 이어지므로 사전 확인이 필수입니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex gap-3.5 items-start">
+                        <div class="p-2 rounded-xl bg-blue-100 text-blue-700 font-bold text-xs flex-shrink-0 mt-0.5">종합</div>
+                        <div class="text-xs text-slate-700 space-y-1">
+                            <strong class="text-slate-900 font-bold block">네오르네상스전형 전략: 학업과 진로 역량의 균형</strong>
+                            <p class="leading-relaxed text-slate-600">
+                                일반학과는 학업(40%) + 진로(40%) 역량이 핵심입니다. 단, 의약학 계열 중 <strong>간호학과</strong>는 수능 최저가 없어 생기부가 우수한 학생들에게 최고의 기회가 될 수 있습니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex gap-3.5 items-start">
+                        <div class="p-2 rounded-xl bg-purple-100 text-purple-700 font-bold text-xs flex-shrink-0 mt-0.5">무전공</div>
+                        <div class="text-xs text-slate-700 space-y-1">
+                            <strong class="text-slate-900 font-bold block">자율·자유전공학부 전략: 기초 학업역량 100% 어필</strong>
+                            <p class="leading-relaxed text-slate-600">
+                                서울캠퍼스 자율전공 지원 시 의약학 및 예체능이 전공 선택에서 제외됨을 유의해야 합니다. 교과종합평가에서 진로역량을 보지 않고 학업역량만 100% 보므로 특정 전공 편향보다 폭넓은 학업적 우수성을 강조해야 합니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 flex gap-3.5 items-start">
+                        <div class="p-2 rounded-xl bg-amber-200 text-amber-900 font-bold text-xs flex-shrink-0 mt-0.5">유의</div>
+                        <div class="text-xs text-slate-700 space-y-1">
+                            <strong class="text-slate-900 font-bold block">타 대학 및 복수지원 유의사항</strong>
+                            <ul class="list-disc list-inside space-y-1 text-slate-600">
+                                <li>수시 지원은 전 대학 총 6회 제한됩니다.</li>
+                                <li>경희대 내 중복지원 제한: 지역균형과 기회균형(특성화고재직자) 중복 불가 / 기회균형Ⅰ과 Ⅱ 간 중복 불가.</li>
+                                <li>서울대학교는 2027학년도 음악대학 실기위주 및 기회균형(사회통합) 등을 운영할 예정이므로 확정 요강 개별 재확인이 필요합니다.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
     </div>
-  </header>
 
-  <!-- Main Content Wrapper -->
-  <main class="flex-grow pt-24">
-
-    <!-- Hero Section -->
-    <section id="about" class="py-16 md:py-24 px-6 max-w-6xl mx-auto">
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-12">
-        <div class="space-y-6 max-w-2xl">
-          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/60">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            공공데이터 기반 리서치 & 분석 포트폴리오
-          </div>
-          
-          <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white">
-            데이터로 사회현상을 탐구하는<br>
-            <span class="bg-gradient-to-r from-indigo-600 via-sky-500 to-emerald-500 dark:from-indigo-400 dark:via-sky-400 dark:to-emerald-400 bg-clip-text text-transparent">차윤겸</span>입니다.
-          </h1>
-
-          <p class="text-slate-600 dark:text-slate-300 text-lg leading-relaxed">
-            대학알리미의 고등교육 통계부터 도로교통공단의 TASS 사고 지표까지,<br class="hidden sm:inline">
-            공공데이터를 정제 및 시각화하여 현실의 문제를 입체적으로 파악하고 리포트로 정제합니다.
-          </p>
-
-          <div class="flex flex-wrap items-center gap-4 pt-2">
-            <a href="#reports" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition shadow-lg shadow-indigo-600/25 flex items-center gap-2">
-              <span>보고서 바로보기</span>
-              <i class="fa-solid fa-arrow-down text-xs"></i>
-            </a>
-            <button onclick="copyContact('yungyeom@example.com')" class="px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-sm transition flex items-center gap-2">
-              <i class="fa-regular fa-envelope"></i>
-              <span>이메일 복사</span>
-            </button>
-          </div>
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-8 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p class="font-medium text-slate-300">2027학년도 주요 대학 수시 모집 입시 비교 분석 보고서</p>
+            <p class="text-slate-500">본 보고서는 제공된 입시 전형 자료를 기반으로 한 전략 제언용 웹 리포트입니다. 최종 모집요강은 지원 대학 입학처 공식 발표를 참고하시기 바랍니다.</p>
         </div>
+    </footer>
 
-        <!-- Quick Summary Box -->
-        <div class="w-full md:w-80 p-6 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 shadow-xl space-y-4">
-          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Key Highlights</h3>
-          <div class="space-y-4">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/50">
-              <span class="text-sm text-slate-600 dark:text-slate-300">주요 분석 리포트</span>
-              <span class="text-lg font-bold text-indigo-600 dark:text-indigo-400">2 건</span>
-            </div>
-            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/50">
-              <span class="text-sm text-slate-600 dark:text-slate-300">활용 데이터 출처</span>
-              <span class="text-sm font-semibold text-slate-800 dark:text-slate-200">대학알리미 / TASS</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-sm text-slate-600 dark:text-slate-300">주 기술 스택</span>
-              <span class="text-sm font-semibold text-slate-800 dark:text-slate-200">Python, GIS, Chart.js</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
 
-    <!-- Reports Section (Cards) -->
-    <section id="reports" class="py-16 px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-slate-800">
-      <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-        <div>
-          <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Interactive Reports</span>
-          <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">분석 보고서 카드</h2>
-        </div>
-        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-md">
-          각 카드를 클릭하면 대화형 모달에서 데이터 분석 개요, 주요 차트, 데이터셋 처리 방식을 직접 확인하실 수 있습니다.
-        </p>
-      </div>
+        // Render Chart.js for Evaluation Standards
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('evalChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['일반학과 (학업 30% + 진로 40%)', '자율/자유전공 (학업역량 100%)'],
+                    datasets: [{
+                        data: [70, 100],
+                        backgroundColor: ['#3B82F6', '#990000'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 10 },
+                                boxWidth: 12
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        });
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        // Calculator Function
+        function calculatePenalty() {
+            const violVal = parseInt(document.getElementById('violSelect').value);
+            const absentDays = parseInt(document.getElementById('absentInput').value) || 0;
+            const tardyCount = parseInt(document.getElementById('tardyInput').value) || 0;
 
-        <!-- Card 1: 진로보고서 -->
-        <div class="group rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 p-7 hover:border-indigo-500 dark:hover:border-indigo-500 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 flex flex-col justify-between">
-          <div>
-            <!-- Top Badges -->
-            <div class="flex items-center justify-between mb-5">
-              <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/50">
-                <i class="fa-solid fa-graduation-cap mr-1"></i> 대학알리미 데이터
-              </span>
-              <span class="text-xs text-slate-400 font-medium">진로 & 교육 분석</span>
-            </div>
+            // Calculate attendance penalty days (2 tardies = 1 absent day)
+            const calculatedAbsent = absentDays + Math.floor(tardyCount / 2);
+            document.getElementById('totalAbsentDays').innerText = `${calculatedAbsent}일 (미인정)`;
 
-            <!-- Title & Description -->
-            <h3 class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors mb-3">
-              대학알리미 데이터 기반<br>대학 진로 & 취업 트렌드 분석 보고서
-            </h3>
-            
-            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-6">
-              대학알리미(고등교육재정 알리미/대학공시) API 데이터를 정제하여 계열별 취업률, 신설·폐지 학과 동향, 지역별 취업 역량을 입체적으로 비교·분석한 진로 리포트입니다.
-            </p>
+            // School Violence text calculation
+            let violPenaltyPercent = 0;
+            let violDescText = "";
+            let isDisqualified = false;
 
-            <!-- Features Bullet Points -->
-            <ul class="space-y-2 mb-6 text-xs text-slate-500 dark:text-slate-400">
-              <li class="flex items-center gap-2">
-                <i class="fa-solid fa-check text-emerald-500"></i>
-                <span>전국 주요 4년제 계열별(공학·인문·자연 등) 취업 지표 산출</span>
-              </li>
-              <li class="flex items-center gap-2">
-                <i class="fa-solid fa-check text-emerald-500"></i>
-                <span>수도권 vs 비수도권 대학 진로 성과 지수 비교</span>
-              </li>
-            </ul>
-
-            <!-- Tags -->
-            <div class="flex flex-wrap gap-2 mb-8">
-              <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-xs font-medium">Python</span>
-              <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-xs font-medium">Pandas</span>
-              <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-xs font-medium">대학알리미 API</span>
-              <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-xs font-medium">Chart.js</span>
-            </div>
-          </div>
-
-          <!-- Action Button -->
-          <a href="./data1/index.html" class="w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-700/50 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white text-slate-700 dark:text-slate-200 font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2">
-            <i class="fa-solid fa-chart-pie"></i>
-            <span>상세 보고서 및 시각화 확인</span>
-          </a>
-        </div>
-
-        <!-- Card 2: 교통분석 보고서 -->
-        <div class="group rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 p-7 hover:border-sky-500 dark:hover:border-sky-500 shadow-sm hover:shadow-xl hover:shadow-sky-500/10 transition-all duration-300 flex flex-col justify-between">
-          <div>
-            <!-- Top Badges -->
-            <div class="flex items-center justify-between mb-5">
-              <span class="px-3 py-1 rounded-full text-xs font-bold bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-700/50">
-                <i class="fa-solid fa-car-burst mr-1"></i> 도로교통공단 데이터
-              </span>
-              <span class="text-xs text-slate-400 font-medium">교통 & 공간 분석</span>
-            </div>
-
-            <!-- Title & Description -->
-            <h3 class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors mb-3">
-              도로교통공단 TASS 기반<br>교통사고 유형 및 위험 구역 분석 보고서
-            </h3>
-
-            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-6">
-              도로교통공단 TAAS 시스템의 사고 데이터를 활용하여 시간대, 도로 조건, 날씨별 사고 발생 빈도를 다차원 분석하고 핫스팟(위험지역)을 도출한 분석 리포트입니다.
-            </p>
-
-            <!-- Features Bullet Points -->
-            <ul class="space-y-2 mb-6 text-xs text-slate-500 dark:text-slate-400">
-              <li class="flex items-center gap-2">
-                <i class="fa-solid fa-check text-emerald-500"></i>
-                <span>시간대별·기상상태별 교통사고 위험도 지수 산출</span>
-              </li>
-              <li class="flex items-center gap-2">
-                <i class="fa-solid fa-check text-emerald-500"></i>
-                <span>사고 다발 구역(Hotspot) 공간적 특성 분석</span>
-              </li>
-            </ul>
-
-            <!-- Tags -->
-            <div class="flex flex-wrap gap-2 mb-8">
-              <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-xs font-medium">Python</span>
-              <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-xs font-medium">도로교통공단 TASS</span>
-              <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-xs font-medium">공간 GIS 분석</span>
-              <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-xs font-medium">Seaborn</span>
-            </div>
-          </div>
-
-          <!-- Action Button -->
-          <a href="./data2/index.html" class="w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-700/50 hover:bg-sky-600 hover:text-white dark:hover:bg-sky-600 dark:hover:text-white text-slate-700 dark:text-slate-200 font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2">
-            <i class="fa-solid fa-chart-line"></i>
-            <span>상세 보고서 및 시각화 확인</span>
-          </a>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Skills & Tech Section -->
-    <section id="skills" class="py-16 px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-slate-800">
-      <div class="mb-10">
-        <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Capabilities</span>
-        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">분석 역량 및 도구</h2>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg font-bold">
-            <i class="fa-solid fa-database"></i>
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">공공데이터 수집 & 정제</h3>
-          <p class="text-sm text-slate-500 dark:text-slate-400">
-            Open API, Rest API 파싱, 결측치 처리 및 비정형 데이터 규격화 프로세스 구현
-          </p>
-        </div>
-
-        <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400 flex items-center justify-center text-lg font-bold">
-            <i class="fa-solid fa-chart-column"></i>
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">통계 분석 & 시각화</h3>
-          <p class="text-sm text-slate-500 dark:text-slate-400">
-            Pandas, Matplotlib, Chart.js 활용 차트 작성 및 상관관계·교차분석
-          </p>
-        </div>
-
-        <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg font-bold">
-            <i class="fa-regular fa-file-lines"></i>
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">분석 리포팅 & 스토리텔링</h3>
-          <p class="text-sm text-slate-500 dark:text-slate-400">
-            데이터 결과 요약, 가설 검증 결과 도출 및 정책/진로 개선 대안 제시
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-20 px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-slate-800 text-center">
-      <div class="max-w-xl mx-auto space-y-6">
-        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white">함께 이야기해볼까요?</h2>
-        <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-          공공데이터 분석, 진로 리포트 및 교통 분석 프로젝트 관련 문의는 언제든 이메일로 연락주시면 빠르게 답변해 드리겠습니다.
-        </p>
-
-        <div class="pt-4 flex flex-col sm:flex-row justify-center items-center gap-4">
-          <button onclick="copyContact('yungyeom@example.com')" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
-            <i class="fa-regular fa-copy"></i>
-            <span>yungyeom@example.com 복사</span>
-          </button>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="py-8 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors">
-    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-4">
-      <div>© 2026 차윤겸 (Cha Yoon-gyeom). All rights reserved.</div>
-      <div class="flex items-center space-x-4">
-        <span>대학알리미 & 도로교통공단 데이터 기반</span>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Modal Component for Detailed Report View -->
-  <div id="report-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm transition-opacity">
-    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl relative">
-      
-      <!-- Modal Header -->
-      <div class="sticky top-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur border-b border-slate-200 dark:border-slate-700 p-6 flex items-center justify-between z-10">
-        <div class="flex items-center gap-3">
-          <span id="modal-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300">
-            분석 보고서
-          </span>
-          <span id="modal-source" class="text-xs text-slate-500 dark:text-slate-400">데이터 출처</span>
-        </div>
-        <button onclick="closeReportModal()" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg transition">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <!-- Modal Body -->
-      <div class="p-6 space-y-6">
-        <div>
-          <h2 id="modal-title" class="text-2xl font-bold text-slate-900 dark:text-white mb-2">보고서 제목</h2>
-          <p id="modal-summary" class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">보고서 개요 설명이 들어갑니다.</p>
-        </div>
-
-        <!-- Dynamic Visual Chart Container -->
-        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
-          <h4 id="chart-title" class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">데이터 시각화 요약</h4>
-          <div class="h-64 w-full">
-            <canvas id="modalChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Detailed Key Findings -->
-        <div>
-          <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-3">주요 분석 하이라이트</h4>
-          <ul id="modal-highlights" class="space-y-2 text-sm text-slate-600 dark:text-slate-300">
-            <!-- Dynamically injected -->
-          </ul>
-        </div>
-
-        <!-- Sample Data Table Preview -->
-        <div>
-          <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-3">데이터 샘플 개요</h4>
-          <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
-            <table class="w-full text-xs text-left text-slate-600 dark:text-slate-300">
-              <thead id="table-head" class="bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200">
-                <!-- Dynamically injected -->
-              </thead>
-              <tbody id="table-body" class="divide-y divide-slate-200 dark:divide-slate-700">
-                <!-- Dynamically injected -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal Footer -->
-      <div class="p-6 border-t border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/50">
-        <span class="text-xs text-slate-400">최종 업데이트: 2026.02</span>
-        <div class="flex items-center gap-3">
-          <button onclick="closeReportModal()" class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition">
-            닫기
-          </button>
-          <button onclick="showToast('보고서 PDF가 준비 중입니다.')" class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-500 transition flex items-center gap-1.5">
-            <i class="fa-solid fa-download"></i>
-            <span>전체 보고서 PDF</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast Message Component -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-    <div class="px-5 py-3 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xl text-sm font-medium flex items-center gap-3 border border-slate-700 dark:border-slate-200">
-      <i class="fa-solid fa-circle-check text-emerald-400 dark:text-emerald-600"></i>
-      <span id="toast-message">메시지 내용</span>
-    </div>
-  </div>
-
-  <!-- JavaScript Logic -->
-  <script>
-    // Data dictionary for reports
-    const reportData = {
-      career: {
-        badge: "대학알리미 데이터",
-        badgeClass: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300",
-        source: "대학알리미 API (고등교육통계)",
-        title: "대학알리미 데이터 기반 대학 진로 & 취업 트렌드 분석 보고서",
-        summary: "전국 주요 대학 공시 지표를 활용해 학과 계열별 취업률 분포, 입학 정원 대비 진학률, 주요 취업 경로 및 인기 학과 이동 지표를 통계적으로 산출했습니다.",
-        chartTitle: "주요 계열별 평균 취업률 비교 (%)",
-        chartType: "bar",
-        chartLabels: ["공학계열", "의약계열", "사회계열", "자연계열", "인문계열", "예체능계열"],
-        chartValues: [71.5, 82.3, 62.1, 64.8, 57.2, 53.9],
-        highlights: [
-          "공학 및 의약계열의 취업률이 전년 대비 평균 2.4%p 상승하며 강세 유지",
-          "수도권 대학교 인문계열과 비수도권 간의 취업률 격차 요인 분석",
-          "최근 3년간 IT·데이터 관련 융합학과 신설 비율 38% 증가"
-        ],
-        tableHead: `<tr><th class="p-2.5">계열</th><th class="p-2.5">평균 취업률</th><th class="p-2.5">유지취업률</th><th class="p-2.5">주요 특징</th></tr>`,
-        tableBody: `
-          <tr><td class="p-2.5 font-semibold">공학계열</td><td class="p-2.5">71.5%</td><td class="p-2.5">83.2%</td><td class="p-2.5">SW·반도체 인력 수요 지속 증가</td></tr>
-          <tr><td class="p-2.5 font-semibold">의약계열</td><td class="p-2.5">82.3%</td><td class="p-2.5">91.0%</td><td class="p-2.5">가장 높은 유지취업률 및 안정성</td></tr>
-          <tr><td class="p-2.5 font-semibold">사회계열</td><td class="p-2.5">62.1%</td><td class="p-2.5">74.5%</td><td class="p-2.5">경영·빅데이터 자격증 보유자 취업 우수</td></tr>
-        `
-      },
-      traffic: {
-        badge: "도로교통공단 데이터",
-        badgeClass: "bg-sky-100 text-sky-700 dark:bg-sky-900/60 dark:text-sky-300",
-        source: "도로교통공단 TAAS (교통사고 분석 시스템)",
-        title: "도로교통공단 TASS 기반 교통사고 위험 구역 및 흐름 분석 보고서",
-        summary: "최근 3년 간의 교통사고 발생 데이터(시간대, 기상, 도로 형태, 사고 유형)를 다변량 통계 기법으로 정제하고 위험 지역 핫스팟 지도를 도출한 종합보고서입니다.",
-        chartTitle: "시간대별 교통사고 발생 비율 (%)",
-        chartType: "line",
-        chartLabels: ["00-04시", "04-08시", "08-12시", "12-16시", "16-20시", "20-24시"],
-        chartValues: [8.2, 11.4, 22.1, 19.8, 25.6, 12.9],
-        highlights: [
-          "퇴근 시간대인 16시~20시 사이에 전체 사고의 25.6%가 집중 발생",
-          "우천 시 신호위반 및 차선이탈 사고 위험지수 일반 기상 대비 1.45배 상승",
-          "교차로 단부 주변 보행자 사고 감소를 위한 개선구역 TOP 5 제시"
-        ],
-        tableHead: `<tr><th class="p-2.5">사고 유형</th><th class="p-2.5">발생 비중</th><th class="p-2.5">치사율</th><th class="p-2.5">주요 요인</th></tr>`,
-        tableBody: `
-          <tr><td class="p-2.5 font-semibold">차대차 교차로 사고</td><td class="p-2.5">42.1%</td><td class="p-2.5">1.2%</td><td class="p-2.5">신호위반 및 안전거리 미확보</td></tr>
-          <tr><td class="p-2.5 font-semibold">차대사람 보행 사고</td><td class="p-2.5">24.5%</td><td class="p-2.5">3.8%</td><td class="p-2.5">야간 및 횡단보도 인근 시야 미확보</td></tr>
-          <tr><td class="p-2.5 font-semibold">단독 차량 사고</td><td class="p-2.5">12.3%</td><td class="p-2.5">4.5%</td><td class="p-2.5">과속 및 기상 악화(빙판길)</td></tr>
-        `
-      }
-    };
-
-    let activeChart = null;
-
-    // Dark / Light Theme Switching Logic
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const darkIcon = document.getElementById('theme-toggle-dark-icon');
-    const lightIcon = document.getElementById('theme-toggle-light-icon');
-
-    function initTheme() {
-      const savedTheme = localStorage.getItem('color-theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-        document.documentElement.classList.add('dark');
-        lightIcon.classList.remove('hidden');
-        darkIcon.classList.add('hidden');
-      } else {
-        document.documentElement.classList.remove('dark');
-        darkIcon.classList.remove('hidden');
-        lightIcon.classList.add('hidden');
-      }
-    }
-
-    themeToggleBtn.addEventListener('click', function() {
-      const isDark = document.documentElement.classList.toggle('dark');
-      if (isDark) {
-        localStorage.setItem('color-theme', 'dark');
-        lightIcon.classList.remove('hidden');
-        darkIcon.classList.add('hidden');
-        showToast('다크 모드로 전환되었습니다.');
-      } else {
-        localStorage.setItem('color-theme', 'light');
-        darkIcon.classList.remove('hidden');
-        lightIcon.classList.add('hidden');
-        showToast('라이트 모드로 전환되었습니다.');
-      }
-
-      // Re-render chart inside modal if open to adjust colors
-      if (activeChart) {
-        updateChartColors();
-      }
-    });
-
-    // Modal Controller Functions
-    function openReportModal(key) {
-      const data = reportData[key];
-      if (!data) return;
-
-      document.getElementById('modal-badge').innerText = data.badge;
-      document.getElementById('modal-badge').className = `px-3 py-1 rounded-full text-xs font-bold ${data.badgeClass}`;
-      document.getElementById('modal-source').innerText = `[출처] ${data.source}`;
-      document.getElementById('modal-title').innerText = data.title;
-      document.getElementById('modal-summary').innerText = data.summary;
-      document.getElementById('chart-title').innerText = data.chartTitle;
-
-      // Render Highlights
-      const highlightsContainer = document.getElementById('modal-highlights');
-      highlightsContainer.innerHTML = data.highlights
-        .map(h => `<li class="flex items-start gap-2"><i class="fa-solid fa-circle-dot text-indigo-500 mt-1 text-xs"></i><span>${h}</span></li>`)
-        .join('');
-
-      // Render Table
-      document.getElementById('table-head').innerHTML = data.tableHead;
-      document.getElementById('table-body').innerHTML = data.tableBody;
-
-      // Show Modal
-      document.getElementById('report-modal').classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-
-      // Render Chart
-      renderModalChart(data);
-    }
-
-    function closeReportModal() {
-      document.getElementById('report-modal').classList.add('hidden');
-      document.body.style.overflow = '';
-      if (activeChart) {
-        activeChart.destroy();
-        activeChart = null;
-      }
-    }
-
-    // Render Chart.js
-    function renderModalChart(data) {
-      const ctx = document.getElementById('modalChart').getContext('2d');
-      if (activeChart) {
-        activeChart.destroy();
-      }
-
-      const isDarkMode = document.documentElement.classList.contains('dark');
-      const textColor = isDarkMode ? '#cbd5e1' : '#334155';
-      const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
-
-      const primaryColor = data.chartType === 'line' ? '#38bdf8' : '#6366f1';
-      const bgColor = data.chartType === 'line' ? 'rgba(56, 189, 248, 0.2)' : 'rgba(99, 102, 241, 0.7)';
-
-      activeChart = new Chart(ctx, {
-        type: data.chartType,
-        data: {
-          labels: data.chartLabels,
-          datasets: [{
-            label: '지표 값',
-            data: data.chartValues,
-            backgroundColor: bgColor,
-            borderColor: primaryColor,
-            borderWidth: 2,
-            tension: 0.3,
-            fill: data.chartType === 'line'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false }
-          },
-          scales: {
-            x: {
-              ticks: { color: textColor, font: { size: 11 } },
-              grid: { color: gridColor }
-            },
-            y: {
-              ticks: { color: textColor, font: { size: 11 } },
-              grid: { color: gridColor },
-              beginAtZero: true
+            switch(violVal) {
+                case 0:
+                    violPenaltyPercent = 0;
+                    violDescText = "학교폭력 감점 사항이 없습니다.";
+                    break;
+                case 1:
+                    violPenaltyPercent = 1;
+                    violDescText = "제1~3호 처분: 총점의 1% 정량 감점";
+                    break;
+                case 4:
+                    violPenaltyPercent = 5;
+                    violDescText = "제4~5호 처분: 총점의 5% 정량 감점";
+                    break;
+                case 6:
+                    violPenaltyPercent = 20;
+                    violDescText = "제6~7호 처분: 총점의 20% 대폭 정량 감점";
+                    break;
+                case 8:
+                    violPenaltyPercent = 40;
+                    violDescText = "제8호 처분: 총점의 40% 감점 (전년 대비 8배 강화 / 사실상 합격 어려움)";
+                    break;
+                case 9:
+                    violPenaltyPercent = 100;
+                    violDescText = "제9호 처분: 전형 성적과 무관하게 즉시 불합격 (결격)";
+                    isDisqualified = true;
+                    break;
             }
-          }
+
+            document.getElementById('violPenaltyText').innerText = isDisqualified ? "즉시 불합격" : `총점의 -${violPenaltyPercent}%`;
+            document.getElementById('violDesc').innerText = violDescText;
+
+            // Attendance Description
+            let attendDescText = "";
+            if (calculatedAbsent === 0) {
+                attendDescText = "근태 감점 요인이 없습니다.";
+            } else if (calculatedAbsent <= 2) {
+                attendDescText = "경미한 미인정 출결 기록. 정성평가 시 성실성 점검 필요.";
+            } else {
+                attendDescText = `미인정 결석 환산 ${calculatedAbsent}일: 출결 정량 평가 감점 및 공동체역량 감점 주의!`;
+            }
+            document.getElementById('attendDesc').innerText = attendDescText;
+
+            // Final Assessment
+            const finalStatusEl = document.getElementById('finalStatusText');
+            if (isDisqualified) {
+                finalStatusEl.innerText = "❌ 지원 불가 (제9호 결격 사항)";
+                finalStatusEl.className = "text-sm font-bold text-red-500 mt-0.5";
+            } else if (violPenaltyPercent >= 20 || calculatedAbsent >= 3) {
+                finalStatusEl.innerText = "⚠️ 매우 위험 (대폭 감점 및 서류 감점 치명적)";
+                finalStatusEl.className = "text-sm font-bold text-red-400 mt-0.5";
+            } else if (violPenaltyPercent > 0 || calculatedAbsent > 0) {
+                finalStatusEl.innerText = "⚡ 주의 (정량 감점 요소 존재)";
+                finalStatusEl.className = "text-sm font-bold text-amber-400 mt-0.5";
+            } else {
+                finalStatusEl.innerText = "✅ 안전 (감점 요인 없음)";
+                finalStatusEl.className = "text-sm font-bold text-emerald-400 mt-0.5";
+            }
         }
-      });
-    }
-
-    function updateChartColors() {
-      if (!activeChart) return;
-      const isDarkMode = document.documentElement.classList.contains('dark');
-      const textColor = isDarkMode ? '#cbd5e1' : '#334155';
-      const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
-
-      activeChart.options.scales.x.ticks.color = textColor;
-      activeChart.options.scales.x.grid.color = gridColor;
-      activeChart.options.scales.y.ticks.color = textColor;
-      activeChart.options.scales.y.grid.color = gridColor;
-      activeChart.update();
-    }
-
-    // Helper to copy text to clipboard without alert()
-    function copyContact(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        showToast(`이메일 주소(${text})가 복사되었습니다.`);
-      }).catch(() => {
-        showToast('복사에 실패했습니다.');
-      });
-    }
-
-    // Toast notification function
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-message');
-      toastMsg.innerText = msg;
-
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-
-      setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3000);
-    }
-
-    // Modal background click close listener
-    document.getElementById('report-modal').addEventListener('click', function(e) {
-      if (e.target === this) {
-        closeReportModal();
-      }
-    });
-
-    // Initialize Theme on load
-    initTheme();
-  </script>
+    </script>
 </body>
 </html>
